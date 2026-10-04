@@ -6,23 +6,16 @@
   margin: 0;
   overflow: hidden;
   isolation: isolate;
-  color: #eef4fc;
-  background:
-    radial-gradient(ellipse at 50% 39%, #20071024, transparent 54%), #070b14;
+  color: #f4f4f4;
+  background: #000;
   position: relative;
 }
 .live-broadcast-header {
   position: relative;
   height: 304px;
   isolation: isolate;
-  background: linear-gradient(
-    117deg,
-    #110b15 0%,
-    #420b20 28%,
-    #b8072d 72%,
-    #f21d3c 100%
-  );
-  border-bottom: 1px solid #ff325837;
+  background: #000;
+  border-bottom: 1px solid #ff002b40;
   overflow: hidden;
 }
 .live-broadcast-header:before {
@@ -30,9 +23,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background:
-    radial-gradient(ellipse at 85% -15%, #ff1d4770, transparent 68%),
-    linear-gradient(180deg, transparent 25%, #04091180);
+  background: none;
   pointer-events: none;
 }
 .live-broadcast-header:after {
@@ -44,10 +35,10 @@
     linear-gradient(
       120deg,
       transparent 26%,
-      #ff668022 26.1%,
+      #ff002b16 26.1%,
       transparent 26.2%
     ),
-    linear-gradient(120deg, transparent 58%, #ff668016 58.1%, transparent 58.2%);
+    linear-gradient(120deg, transparent 58%, #ff002b0d 58.1%, transparent 58.2%);
   pointer-events: none;
 }
 .live-header-lines {
@@ -62,25 +53,25 @@
   width: 52%;
   height: 100%;
   transform: skewX(-32deg);
-  border-left: 1px solid #ff759320;
-  border-right: 1px solid #ff759312;
+  border-left: 1px solid #ff002b20;
+  border-right: 1px solid #ff002b0d;
   top: 0;
-  background: linear-gradient(90deg, #ff5e7304, transparent);
+  background: none;
 }
 .live-header-lines > i:nth-child(1) {
   left: -25%;
 }
 .live-header-lines > i:nth-child(2) {
   left: 11%;
-  background: #ffffff02;
+  background: none;
 }
 .live-header-lines > i:nth-child(3) {
   left: 48%;
-  border-color: #ff52600f;
+  border-color: #ff002b0f;
 }
 .live-header-lines > i:nth-child(4) {
   left: 82%;
-  background: #0000000a;
+  background: none;
 }
 .live-broadcast-toolbar {
   position: relative;
@@ -100,7 +91,7 @@
   border: 0;
   background: none;
   padding: 8px 0;
-  color: #f3bdc8;
+  color: #b5b5b5;
   font-size: 11px;
   transition: color 0.2s;
   white-space: nowrap;
@@ -115,8 +106,8 @@
 }
 .live-currency-switch {
   display: flex;
-  border: 1px solid #fcb2c822;
-  background: #00000019;
+  border: 1px solid #ff002b33;
+  background: #000;
   border-radius: 6px;
   padding: 3px;
   gap: 2px;
@@ -128,14 +119,17 @@
   min-height: 27px;
   min-width: 33px;
   font-size: 9px;
-  color: #e2a3b2;
+  color: #a6a6a6;
   border-radius: 3px;
   line-height: 1;
 }
 .live-currency-switch > button.is-active {
-  border-color: #ffadbf25;
-  background: #ffffff12;
+  border-color: #ff002b80;
+  background: #000;
   color: #fff;
+  box-shadow:
+    inset 0 -1px 0 #ff002b,
+    0 0 10px #ff002b18;
 }
 .live-currency-switch > button:hover {
   color: #fff;
@@ -144,38 +138,39 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  border: 1px solid #ffafc128;
+  border: 1px solid #ff002b33;
   border-radius: 6px;
-  background: #00000019;
+  background: #000;
   min-height: 35px;
   padding: 7px 10px;
-  color: #f2c1ce;
+  color: #d8d8d8;
   font-size: 9px;
 }
 .live-fullscreen-button:hover {
-  background: #ffffff0b;
-  border-color: #ffafc159;
+  background: #000;
+  border-color: #ff002b99;
   color: #fff;
 }
 .live-add-sale {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  border: 1px solid #ffafc23d;
+  border: 1px solid #ff002b;
   border-radius: 6px;
-  background: #fd184161;
-  color: #fff;
+  background: #ff002b;
+  color: #000;
+  font-weight: 600;
   min-height: 35px;
   padding: 7px 11px;
   font-size: 10px;
-  box-shadow: 0 2px 14px #44031926;
+  box-shadow: 0 0 20px #ff002b30;
   transition:
     background 0.2s,
     box-shadow 0.2s;
 }
 .live-add-sale:hover {
-  background: #ff1747;
-  box-shadow: 0 0 22px #ff255333;
+  background: #ff173e;
+  box-shadow: 0 0 28px #ff002b66;
 }
 .live-broadcast-identity {
   display: grid;
@@ -191,14 +186,14 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  border: 1px solid #ffb4c42f;
-  border-radius: 1px;
-  background: linear-gradient(125deg, #220718aa, #18091499);
+  border: 1px solid #ff002b4d;
+  border-radius: 8px;
+  background: #000;
   padding: 10px 22px;
   position: relative;
   box-shadow:
-    0 10px 28px #20020d36,
-    inset 0 1px 0 #ff9dae0f;
+    0 0 30px #ff002b12,
+    inset 0 1px 0 #ff002b14;
   min-height: 61px;
 }
 .live-brand-plaque:before,
@@ -207,9 +202,9 @@
   position: absolute;
   height: 7px;
   width: 7px;
-  border: 1px solid #ff8ca663;
+  border: 1px solid #ff002b99;
   top: -4px;
-  background: #691027;
+  background: #000;
   transform: rotate(45deg);
 }
 .live-brand-plaque:before {
@@ -219,21 +214,21 @@
   right: -4px;
 }
 .live-brand-plaque > .ghost-brand-mark {
-  filter: drop-shadow(0 0 8px #ff415736);
+  filter: drop-shadow(0 0 10px #ff002b66);
 }
 .live-brand-plaque > span {
   font:
     600 26px/1 "Space Grotesk",
     sans-serif;
   letter-spacing: 2px;
-  color: #fff5f6;
+  color: #fff;
 }
 .live-brand-plaque em {
   font:
     500 15px "Space Grotesk",
     sans-serif;
   letter-spacing: -1px;
-  color: #ff617e;
+  color: #ff002b;
   margin-left: 8px;
 }
 .live-brand-plaque > i {
@@ -241,8 +236,8 @@
   bottom: -1px;
   height: 1px;
   width: 21%;
-  background: #ff3b66;
-  box-shadow: 0 0 9px #ff3b6680;
+  background: #ff002b;
+  box-shadow: 0 0 13px #ff002b;
 }
 .live-brand-plaque > i:first-of-type {
   left: 0;
@@ -255,10 +250,10 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 500;
   letter-spacing: 1.8px;
-  color: #f1b1c0;
+  color: #b0b0b0;
   margin-top: 13px;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -267,14 +262,15 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #ff7691;
+  background: #ff002b;
+  box-shadow: 0 0 9px #ff002b99;
 }
 .live-broadcast-identity h1 {
   font:
     500 35px/1.05 "Space Grotesk",
     sans-serif;
   letter-spacing: -1px;
-  color: #fff4f6;
+  color: #fff;
   margin: 15px 0 12px;
 }
 .live-calendar-label {
@@ -284,7 +280,7 @@
   gap: 8px;
   font-size: 9px;
   line-height: 1.6;
-  color: #dcaaba;
+  color: #a6a6a6;
   font-variant-numeric: tabular-nums;
   margin: 0;
   flex-wrap: wrap;
@@ -293,18 +289,18 @@
   text-transform: capitalize;
 }
 .live-calendar-label > svg {
-  color: #de879e;
+  color: #ff002b;
 }
 .live-calendar-label > i {
   font-style: normal;
-  color: #a36176;
+  color: #686868;
 }
 .live-calendar-label > b {
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 400;
-  color: #d58ca2;
-  background: #20000f2b;
-  border: 1px solid #f97b9f0d;
+  color: #a6a6a6;
+  background: #000;
+  border: 1px solid #ff002b26;
   padding: 1px 4px;
   border-radius: 3px;
 }
@@ -320,25 +316,24 @@
   margin: -36px auto 0;
   width: 88%;
   max-width: 1050px;
-  height: 166px;
+  min-height: 176px;
   padding: 18px 25px 13px;
   isolation: isolate;
-  background: linear-gradient(125deg, #0d1223f2, #0b101ded);
-  border: 1px solid #ff5c7c42;
-  border-top-color: #e7758c61;
-  border-radius: 3px;
+  background: #000;
+  border: 1px solid #ff002b59;
+  border-top-color: #ff002b80;
+  border-radius: 12px;
   box-shadow:
-    0 20px 65px #00000050,
-    0 0 35px #ff003c09,
-    inset 0 1px 0 #ffdae206;
-  backdrop-filter: blur(25px);
+    0 20px 65px #000,
+    0 0 38px #ff002b12,
+    inset 0 1px 0 #ff002b1a;
 }
 .live-total-plaque:before {
   content: "";
   position: absolute;
   inset: -1px;
   z-index: -1;
-  background: radial-gradient(ellipse at 50% 100%, #ff003c12, transparent 73%);
+  background: none;
   pointer-events: none;
 }
 .live-edge-diamond {
@@ -347,9 +342,9 @@
   height: 9px;
   top: 50%;
   transform: translateY(-50%) rotate(45deg);
-  border: 1px solid #ff6e91;
-  background: #3a0c24;
-  box-shadow: 0 0 8px #ff1f5055;
+  border: 1px solid #ff002b;
+  background: #000;
+  box-shadow: 0 0 12px #ff002b99;
 }
 .live-edge-diamond.is-left {
   left: -5px;
@@ -367,7 +362,7 @@
   font:
     500 9px Inter,
     sans-serif;
-  color: #a3a2b4;
+  color: #bcbcbc;
   letter-spacing: 1.6px;
   margin: 0;
 }
@@ -375,19 +370,19 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 7px;
+  font-size: 9px;
   letter-spacing: 1.2px;
-  color: #8e859c;
+  color: #8d8d8d;
 }
 .live-total-topline > span > i {
   width: 4px;
   height: 4px;
-  background: #ff315d;
+  background: #ff002b;
   border-radius: 50%;
-  box-shadow: 0 0 7px #ff315d77;
+  box-shadow: 0 0 11px #ff002baa;
 }
 .live-total-topline > span > i.is-offline {
-  background: #8c798c;
+  background: #858585;
   box-shadow: none;
 }
 .live-total-value {
@@ -395,30 +390,36 @@
   align-items: baseline;
   justify-content: center;
   gap: 12px;
-  margin: 15px auto 15px;
+  margin: 18px auto 19px;
   font:
-    500 clamp(42px, 4.6vw, 72px)/0.95 "Space Grotesk",
+    600 clamp(44px, 5.2vw, 78px)/0.95 "Space Grotesk",
     sans-serif;
-  letter-spacing: 1px;
+  letter-spacing: -2.5px;
   font-variant-numeric: tabular-nums;
-  color: #e6f5ff;
-  text-shadow: 0 0 24px #98d6ff12;
+  color: #fff;
   white-space: nowrap;
   max-width: 100%;
 }
+.live-total-value > span:last-child {
+  background: linear-gradient(180deg, #fff 0%, #fff 44%, #ffccd4 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 18px #ff002b35);
+}
 .live-total-value > .live-value-currency {
-  font-size: 0.63em;
-  color: #ff3c64;
+  font-size: 0.46em;
+  color: #ff002b;
   letter-spacing: -0.3px;
-  text-shadow: 0 0 18px #ff174c24;
+  text-shadow: 0 0 18px #ff002b88;
 }
 .live-total-bottomline {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 20px;
-  font-size: 8px;
-  color: #8790a5;
+  font-size: 10px;
+  color: #999;
 }
 .live-total-bottomline > span {
   display: flex;
@@ -427,43 +428,43 @@
   line-height: 1.4;
 }
 .live-total-bottomline > span:first-child {
-  color: #9c9cac;
+  color: #a8a8a8;
 }
 .live-total-bottomline > span:first-child > svg {
-  color: #ff3c64;
+  color: #ff002b;
 }
 .live-total-bottomline > span:first-child.is-offline {
-  color: #857484;
+  color: #858585;
 }
 .live-day-comparison {
-  color: #d891a5;
+  color: #ddd;
 }
 .live-day-comparison > svg {
-  color: #ff476c;
+  color: #ff002b;
 }
 .live-day-comparison.is-negative > svg {
   transform: rotate(180deg);
 }
 .live-no-comparison {
-  color: #746a80;
+  color: #909090;
 }
 .live-total-underlight {
   position: absolute;
   bottom: -1px;
   left: 21%;
   right: 21%;
-  height: 1px;
+  height: 2px;
   background: linear-gradient(
     90deg,
     transparent,
-    #ff2156,
-    #ff849a,
-    #ff2156,
+    #ff002b,
+    #ff6174,
+    #ff002b,
     transparent
   );
   box-shadow:
-    0 3px 15px 1px #ff315b88,
-    0 8px 48px 8px #ff315b26;
+    0 3px 18px 1px #ff002baa,
+    0 8px 46px 6px #ff002b30;
   pointer-events: none;
 }
 .live-trend-section {
@@ -479,9 +480,9 @@
 }
 .live-trend-eyebrow {
   display: block;
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 1.6px;
-  color: #b2aac0;
+  color: #aaa;
   margin-bottom: 10px;
 }
 .live-trend-heading h2 {
@@ -489,11 +490,11 @@
     500 23px/1.1 "Space Grotesk",
     sans-serif;
   letter-spacing: -0.4px;
-  color: #f0f0f7;
+  color: #fff;
   margin: 0 0 10px;
 }
 .live-trend-heading p {
-  color: #7f7b90;
+  color: #999;
   font-size: 10px;
   margin: 0;
 }
@@ -501,7 +502,7 @@
   display: flex;
   gap: 18px;
   font-size: 9px;
-  color: #a7a1b3;
+  color: #b5b5b5;
   align-self: flex-end;
   padding-bottom: 3px;
 }
@@ -512,25 +513,25 @@
 }
 .live-chart-legend i {
   display: block;
-  height: 5px;
-  width: 5px;
-  border-radius: 50%;
-  background: #ff2658;
-  box-shadow: 0 0 7px #ff265845;
+  height: 3px;
+  width: 15px;
+  border-radius: 3px;
+  background: #ff002b;
+  box-shadow: 0 0 7px #ff002b88;
 }
 .live-chart-legend > span:last-child > i {
-  background: #b8c6d8;
+  background: #b7b7b7;
   box-shadow: none;
 }
 .live-large-chart {
-  height: clamp(270px, 31vh, 370px);
+  height: clamp(300px, 33vh, 400px);
   margin-top: 17px;
 }
 .live-reference-layout .neon-chart-axis {
-  fill: #73758b;
+  fill: #a1a1a1;
 }
 .live-reference-layout .neon-chart-labels {
-  color: #747489;
+  color: #a1a1a1;
 }
 .live-reference-layout .neon-chart-empty {
   top: 25%;
@@ -538,25 +539,25 @@
 }
 .live-reference-layout .neon-chart-empty strong {
   font-size: 15px;
-  color: #bcb9cd;
+  color: #ccc;
 }
 .live-reference-layout .neon-chart-empty p {
   font-size: 10px;
-  color: #77758b;
+  color: #999;
   max-width: 320px;
 }
 .live-reference-layout .neon-chart-empty-signal {
-  opacity: 0.7;
+  opacity: 1;
   transform: scale(0.85);
   margin-bottom: 0;
 }
 .live-reference-layout .neon-chart-tooltip {
-  background: #111525ee;
-  border-color: #ff315955;
+  background: #000;
+  border-color: #ff002b66;
 }
 .live-reference-layout .neon-chart-tooltip > small {
   font-size: 10px;
-  color: #a1b1c8;
+  color: #b5b5b5;
 }
 .live-chart-footnote {
   display: flex;
@@ -564,22 +565,22 @@
   justify-content: space-between;
   gap: 15px;
   padding: 2px 1.9% 0 4.9%;
-  font-size: 7px;
-  color: #605f74;
+  font-size: 9px;
+  color: #858585;
   line-height: 1.8;
 }
 .live-carried-note {
   margin: 10px 0 0;
   padding-left: 4.9%;
   font-size: 9px;
-  color: #9e839a;
+  color: #aaa;
   line-height: 1.7;
 }
 .live-broadcast-summary {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid #34223c8a;
-  border-bottom: 1px solid #34223c8a;
+  border-top: 1px solid #ff002b26;
+  border-bottom: 1px solid #ff002b26;
   margin-top: 19px;
   padding: 17px 0 16px;
   position: relative;
@@ -591,13 +592,13 @@
   width: 40%;
   left: 30%;
   top: -1px;
-  background: linear-gradient(90deg, transparent, #ff194754, transparent);
-  box-shadow: 0 0 15px #ff315b24;
+  background: linear-gradient(90deg, transparent, #ff002b70, transparent);
+  box-shadow: 0 0 15px #ff002b44;
 }
 .live-broadcast-summary > button {
   background: none;
   border: 0;
-  border-right: 1px solid #34243c8c;
+  border-right: 1px solid #ffffff14;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -611,16 +612,16 @@
   border-right: 0;
 }
 .live-broadcast-summary > button > span {
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 1.3px;
-  color: #948b9f;
+  color: #aaa;
   font-weight: 500;
 }
 .live-broadcast-summary > button > strong {
   font:
     500 24px/1 "Space Grotesk",
     sans-serif;
-  color: #e7e8f4;
+  color: #f5f5f5;
   letter-spacing: 0.5px;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
@@ -629,20 +630,20 @@
   font:
     400 9px Inter,
     sans-serif;
-  color: #82758e;
+  color: #a1a1a1;
   margin-left: 7px;
   letter-spacing: 0;
 }
 .live-broadcast-summary > button > small {
-  font-size: 7px;
-  color: #6e687d;
+  font-size: 9px;
+  color: #8d8d8d;
   line-height: 1.6;
 }
 .live-broadcast-summary > button > strong.is-negative {
-  color: #ff7992;
+  color: #ff354c;
 }
 .live-broadcast-summary > button:hover > span {
-  color: #dcabbe;
+  color: #fff;
 }
 .live-broadcast-footer {
   display: flex;
@@ -651,8 +652,8 @@
   gap: 17px;
   margin-top: 16px;
   padding: 0 4px;
-  font-size: 8px;
-  color: #676178;
+  font-size: 9px;
+  color: #858585;
   line-height: 1.8;
 }
 .live-broadcast-footer > span:first-child {
@@ -664,16 +665,16 @@
   height: 4px;
   width: 4px;
   border-radius: 50%;
-  background: #ff2759;
+  background: #ff002b;
   flex-shrink: 0;
 }
 .live-broadcast-footer > span:last-child {
   font:
-    500 8px "Space Grotesk",
+    500 9px "Space Grotesk",
     sans-serif;
   letter-spacing: 0.8px;
   white-space: nowrap;
-  color: #85758b;
+  color: #a1a1a1;
 }
 .ghost-live-page:fullscreen {
   overflow-y: auto;
@@ -748,7 +749,7 @@
     font-size: 22px;
   }
   .live-broadcast-footer {
-    font-size: 7px;
+    font-size: 9px;
   }
 }
 @media (max-width: 700px) {
@@ -788,7 +789,7 @@
     margin-left: auto;
   }
   .live-currency-switch > button {
-    font-size: 8px;
+    font-size: 9px;
     min-height: 22px;
     padding: 4px 7px;
     min-width: 28px;
@@ -819,19 +820,19 @@
     margin-bottom: 12px;
   }
   .live-room-label {
-    font-size: 7px;
+    font-size: 9px;
     letter-spacing: 1.4px;
     margin-top: 12px;
     max-width: 90%;
   }
   .live-calendar-label {
-    font-size: 8px;
+    font-size: 9px;
     gap: 6px;
     max-width: 90%;
     line-height: 1.75;
   }
   .live-calendar-label > b {
-    font-size: 7px;
+    font-size: 9px;
   }
   .live-calendar-label > svg {
     width: 11px;
@@ -847,11 +848,11 @@
     padding: 16px 17px 12px;
   }
   .live-total-topline h2 {
-    font-size: 7px;
+    font-size: 9px;
     letter-spacing: 1.2px;
   }
   .live-total-topline > span {
-    font-size: 6px;
+    font-size: 9px;
     letter-spacing: 0.8px;
     gap: 5px;
   }
@@ -863,7 +864,7 @@
     margin-bottom: 20px;
   }
   .live-total-bottomline {
-    font-size: 7px;
+    font-size: 9px;
     gap: 11px;
     flex-wrap: wrap;
   }
@@ -880,7 +881,7 @@
     gap: 10px;
   }
   .live-trend-eyebrow {
-    font-size: 7px;
+    font-size: 9px;
     letter-spacing: 1.4px;
     margin-bottom: 10px;
   }
@@ -893,13 +894,13 @@
     font-size: 9px;
   }
   .live-chart-legend {
-    font-size: 8px;
+    font-size: 9px;
     gap: 10px;
     padding-bottom: 2px;
   }
   .live-chart-legend i {
-    width: 4px;
-    height: 4px;
+    width: 12px;
+    height: 3px;
   }
   .live-large-chart {
     height: 285px;
@@ -919,13 +920,13 @@
     line-height: 1.8;
   }
   .live-reference-layout .neon-chart-labels {
-    font-size: 7px;
+    font-size: 9px;
   }
   .live-reference-layout .neon-chart-x-label:nth-last-child(even) {
     display: none;
   }
   .live-chart-footnote {
-    font-size: 6px;
+    font-size: 9px;
     gap: 10px;
     padding-top: 8px;
   }
@@ -941,7 +942,7 @@
     gap: 11px;
   }
   .live-broadcast-summary > button > span {
-    font-size: 6px;
+    font-size: 9px;
     letter-spacing: 0.7px;
     line-height: 1.5;
     max-width: 100px;
@@ -952,17 +953,17 @@
     letter-spacing: 0;
   }
   .live-broadcast-summary > button > strong > small {
-    font-size: 7px;
+    font-size: 9px;
     margin-left: 4px;
   }
   .live-broadcast-summary > button > small {
-    font-size: 6px;
+    font-size: 9px;
     line-height: 1.8;
     max-width: 96px;
   }
   .live-broadcast-footer {
     margin-top: 16px;
-    font-size: 7px;
+    font-size: 9px;
     align-items: flex-start;
     gap: 15px;
   }
@@ -975,12 +976,12 @@
     margin-top: 5px;
   }
   .live-broadcast-footer > span:last-child {
-    font-size: 6px;
+    font-size: 9px;
     letter-spacing: 0.6px;
     margin-top: 3px;
   }
   .live-carried-note {
-    font-size: 8px;
+    font-size: 9px;
   }
 }
 @media (max-width: 400px) {
@@ -990,7 +991,7 @@
     gap: 10px;
   }
   .live-back-button {
-    font-size: 8px;
+    font-size: 9px;
     gap: 5px;
   }
   .live-back-button > svg {
@@ -1002,7 +1003,7 @@
     gap: 5px;
   }
   .live-add-sale {
-    font-size: 8px;
+    font-size: 9px;
     padding: 6px 8px;
   }
   .live-fullscreen-button {
@@ -1017,20 +1018,20 @@
     font-size: 49px;
   }
   .live-total-topline > span {
-    font-size: 5px;
+    font-size: 9px;
   }
   .live-total-topline h2 {
-    font-size: 6px;
+    font-size: 9px;
   }
   .live-total-bottomline {
-    font-size: 6px;
+    font-size: 9px;
     gap: 9px;
   }
   .live-trend-heading h2 {
     font-size: 21px;
   }
   .live-chart-legend {
-    font-size: 7px;
+    font-size: 9px;
     gap: 8px;
   }
   .live-broadcast-summary > button > strong {

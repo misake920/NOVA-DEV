@@ -11,6 +11,7 @@ import "@fontsource/space-grotesk/latin-700.css";
 import "./styles.css";
 import "./design-system.css";
 import App from "./App";
+import "./neon-theme.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />

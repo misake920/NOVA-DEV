@@ -1,6 +1,6 @@
 # THE GHOST </>
 
-Centro de prospecção internacional, abordagens comerciais, CRM e gestão financeira em preto e neon vermelho, criado com a skill atommic.
+Centro de prospecção internacional, abordagens comerciais, CRM e gestão financeira em preto absoluto e vermelho neon, criado com a skill atommic.
 
 ## Executar
 

@@ -199,7 +199,7 @@ function CashFlowChart({
         >
           <defs>
             <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ff173d" stopOpacity=".42" />
+              <stop offset="0%" stopColor="#ff002a" stopOpacity=".28" />
               <stop offset="65%" stopColor="#ff002a" stopOpacity=".12" />
               <stop offset="100%" stopColor="#ff002a" stopOpacity="0" />
             </linearGradient>
@@ -211,13 +211,13 @@ function CashFlowChart({
               x2="794"
               y2="0"
             >
-              <stop offset="0%" stopColor="#f5002f" />
-              <stop offset="55%" stopColor="#ff3450" />
-              <stop offset="100%" stopColor="#ff9b87" />
+              <stop offset="0%" stopColor="#ff002a" />
+              <stop offset="55%" stopColor="#ff2341" />
+              <stop offset="100%" stopColor="#ff3b4c" />
             </linearGradient>
             <linearGradient id={`${uid}-zero`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ff1438" stopOpacity="0" />
-              <stop offset="100%" stopColor="#ff1438" stopOpacity=".12" />
+              <stop offset="0%" stopColor="#ff002a" stopOpacity="0" />
+              <stop offset="100%" stopColor="#ff002a" stopOpacity=".16" />
             </linearGradient>
             <filter
               id={`${uid}-glow`}
@@ -227,7 +227,7 @@ function CashFlowChart({
               width="1020"
               height="600"
             >
-              <feGaussianBlur stdDeviation="3.2" />
+              <feGaussianBlur stdDeviation="4.5" />
             </filter>
           </defs>
           {!hasData && (
@@ -293,7 +293,7 @@ function CashFlowChart({
             <path
               d={line("outflow")}
               fill="none"
-              stroke="#746b6d"
+              stroke="#818181"
               strokeWidth="2"
               strokeDasharray="4 5"
             />
@@ -301,9 +301,9 @@ function CashFlowChart({
           <path
             d={line("inflow")}
             fill="none"
-            stroke="#ff153c"
-            strokeWidth="8"
-            opacity=".5"
+            stroke="#ff002a"
+            strokeWidth="13"
+            opacity=".65"
             filter={`url(#${uid}-glow)`}
           />
           <path
@@ -311,7 +311,7 @@ function CashFlowChart({
             d={line("inflow")}
             fill="none"
             stroke={`url(#${uid}-stroke)`}
-            strokeWidth="3"
+            strokeWidth="4.25"
             strokeLinejoin="round"
             strokeLinecap="round"
           />
@@ -322,7 +322,7 @@ function CashFlowChart({
                 x2={x(active)}
                 y1="35"
                 y2="245"
-                stroke="#ff5470"
+                stroke="#ff002a"
                 strokeOpacity=".4"
                 strokeDasharray="3 5"
               />
@@ -330,15 +330,15 @@ function CashFlowChart({
                 cx={x(active)}
                 cy={y(points[active]?.inflow || 0)}
                 r="7"
-                fill="#ff294c"
+                fill="#ff002a"
                 fillOpacity=".16"
-                stroke="#ff465e"
+                stroke="#ff2341"
               />
               <circle
                 cx={x(active)}
                 cy={y(points[active]?.inflow || 0)}
                 r="3"
-                fill="#ffe6df"
+                fill="#ffffff"
               />
             </g>
           )}

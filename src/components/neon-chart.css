@@ -1,4 +1,5 @@
 .neon-chart {
+  --neon-tooltip-width: 224px;
   position: relative;
   width: 100%;
   height: 330px;
@@ -13,7 +14,7 @@
   overflow: visible;
 }
 .neon-chart-axis {
-  fill: #75747b;
+  fill: #a1a1a1;
   font:
     10px Inter,
     sans-serif;
@@ -35,13 +36,13 @@
   font:
     500 17px "Space Grotesk",
     sans-serif;
-  color: #ddd9dc;
+  color: #ddd;
   letter-spacing: -0.3px;
 }
 .neon-chart-empty p {
   font-size: 12px;
   line-height: 1.7;
-  color: #88838a;
+  color: #999;
   margin: 0;
 }
 .neon-chart-empty-signal {
@@ -54,9 +55,9 @@
 .neon-chart-empty-signal i {
   width: 3px;
   height: 12px;
-  background: #ff2146;
+  background: #ff002b;
   border-radius: 2px;
-  box-shadow: 0 0 9px #ff003c88;
+  box-shadow: 0 0 12px #ff002baa;
 }
 .neon-chart-empty-signal i:nth-child(2) {
   height: 24px;
@@ -70,33 +71,41 @@
 .neon-chart-tooltip {
   position: absolute;
   transform: translateX(-50%);
-  background: #130b0eea;
+  background: #000;
   backdrop-filter: blur(12px);
-  border: 1px solid #ff003c55;
+  border: 1px solid #ff002b80;
   border-radius: 10px;
   box-shadow:
     0 8px 35px #0008,
-    0 0 25px #ff003c13;
+    0 0 25px #ff002b22;
+  width: var(--neon-tooltip-width);
+  max-width: calc(100% - 16px);
+  box-sizing: border-box;
   padding: 11px 16px;
   display: grid;
   gap: 5px;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   pointer-events: none;
   z-index: 2;
 }
 .neon-chart-tooltip > span {
   font-size: 10px;
-  color: #a98f96;
+  color: #aaa;
 }
 .neon-chart-tooltip > strong {
   font:
     500 16px "Space Grotesk",
     sans-serif;
-  color: #fff2ef;
+  color: #fff;
   letter-spacing: -0.4px;
+}
+.neon-chart-tooltip > small {
+  font-size: 10px;
+  color: #b5b5b5;
 }
 @media (max-width: 600px) {
   .neon-chart {
+    --neon-tooltip-width: 200px;
     height: 235px;
   }
   .neon-chart-axis {
@@ -131,7 +140,7 @@
   font:
     9px Inter,
     sans-serif;
-  color: #75747b;
+  color: #a1a1a1;
   font-variant-numeric: tabular-nums;
 }
 .neon-chart-labels > span {
@@ -153,9 +162,9 @@
 }
 @media (max-width: 600px) {
   .neon-chart-labels {
-    font-size: 8px;
+    font-size: 9px;
   }
   .neon-chart-y-label {
-    font-size: 7px;
+    font-size: 9px;
   }
 }

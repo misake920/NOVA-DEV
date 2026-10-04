@@ -199,9 +199,9 @@ function CashFlowChart({
         >
           <defs>
             <linearGradient id={`${uid}-fill`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ff002b" stopOpacity=".48" />
-              <stop offset="65%" stopColor="#ff002b" stopOpacity=".16" />
-              <stop offset="100%" stopColor="#ff002b" stopOpacity="0" />
+              <stop offset="0%" stopColor="#ff173d" stopOpacity=".42" />
+              <stop offset="65%" stopColor="#ff002a" stopOpacity=".12" />
+              <stop offset="100%" stopColor="#ff002a" stopOpacity="0" />
             </linearGradient>
             <linearGradient
               id={`${uid}-stroke`}
@@ -211,13 +211,13 @@ function CashFlowChart({
               x2="794"
               y2="0"
             >
-              <stop offset="0%" stopColor="#ff002b" />
-              <stop offset="55%" stopColor="#ff002b" />
-              <stop offset="100%" stopColor="#ff3516" />
+              <stop offset="0%" stopColor="#f5002f" />
+              <stop offset="55%" stopColor="#ff3450" />
+              <stop offset="100%" stopColor="#ff9b87" />
             </linearGradient>
             <linearGradient id={`${uid}-zero`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ff002b" stopOpacity="0" />
-              <stop offset="100%" stopColor="#ff002b" stopOpacity=".18" />
+              <stop offset="0%" stopColor="#ff1438" stopOpacity="0" />
+              <stop offset="100%" stopColor="#ff1438" stopOpacity=".12" />
             </linearGradient>
             <filter
               id={`${uid}-glow`}
@@ -227,7 +227,7 @@ function CashFlowChart({
               width="1020"
               height="600"
             >
-              <feGaussianBlur stdDeviation="5.5" />
+              <feGaussianBlur stdDeviation="3.2" />
             </filter>
           </defs>
           {!hasData && (
@@ -246,8 +246,8 @@ function CashFlowChart({
                 x2="794"
                 y1={y(ceiling * ratio)}
                 y2={y(ceiling * ratio)}
-                stroke="#ff002b"
-                strokeOpacity={ratio === 0 ? 0.25 : 0.13}
+                stroke="#ffffff"
+                strokeOpacity={ratio === 0 ? 0.09 : 0.045}
                 strokeDasharray={ratio ? "3 7" : undefined}
               />
               <text
@@ -267,8 +267,8 @@ function CashFlowChart({
                 x2={64 + ratio * 730}
                 y1="42"
                 y2="238"
-                stroke="#ff002b"
-                strokeOpacity=".06"
+                stroke="#fff"
+                strokeOpacity=".025"
               />
               <text
                 x={64 + ratio * 730}
@@ -293,7 +293,7 @@ function CashFlowChart({
             <path
               d={line("outflow")}
               fill="none"
-              stroke="#999999"
+              stroke="#746b6d"
               strokeWidth="2"
               strokeDasharray="4 5"
             />
@@ -301,9 +301,9 @@ function CashFlowChart({
           <path
             d={line("inflow")}
             fill="none"
-            stroke="#ff002b"
-            strokeWidth="15"
-            opacity=".7"
+            stroke="#ff153c"
+            strokeWidth="8"
+            opacity=".5"
             filter={`url(#${uid}-glow)`}
           />
           <path
@@ -311,7 +311,7 @@ function CashFlowChart({
             d={line("inflow")}
             fill="none"
             stroke={`url(#${uid}-stroke)`}
-            strokeWidth="5"
+            strokeWidth="3"
             strokeLinejoin="round"
             strokeLinecap="round"
           />
@@ -322,23 +322,23 @@ function CashFlowChart({
                 x2={x(active)}
                 y1="35"
                 y2="245"
-                stroke="#ff002b"
-                strokeOpacity=".65"
+                stroke="#ff5470"
+                strokeOpacity=".4"
                 strokeDasharray="3 5"
               />
               <circle
                 cx={x(active)}
                 cy={y(points[active]?.inflow || 0)}
                 r="7"
-                fill="#ff002b"
+                fill="#ff294c"
                 fillOpacity=".16"
-                stroke="#ff002b"
+                stroke="#ff465e"
               />
               <circle
                 cx={x(active)}
                 cy={y(points[active]?.inflow || 0)}
                 r="3"
-                fill="#ffffff"
+                fill="#ffe6df"
               />
             </g>
           )}

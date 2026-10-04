@@ -444,6 +444,7 @@ export default function LivePage({
             comparisonLabel="Ontem"
             currency={currency}
             paused={paused}
+            smooth
             showPoints
             empty={todaySales.length === 0 && yesterdaySales.length === 0}
             emptyTitle="Sua próxima venda acende este painel."

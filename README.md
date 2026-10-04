@@ -1,24 +1,24 @@
 # THE GHOST </>
 
-Centro de prospecção internacional, abordagens comerciais, CRM e gestão financeira em preto absoluto e vermelho neon, com identidade brutal e punk, criado com a skill atommic.
+Centro de prospecção internacional, abordagens comerciais, CRM e gestão financeira em preto e neon vermelho, criado com a skill atommic.
 
 ## Executar
 
 Node.js 24.x e npm:
 
-```bash
+~~~bash
 npm ci
 npm run dev
-```
+~~~
 
 Frontend Vite e API Express; o desenvolvimento local usa SQLite em /workspace/ghost-data/the-ghost.sqlite. Use GHOST_DATABASE_PATH para outro arquivo de banco. Nenhum cliente, venda ou outro registro comercial é criado automaticamente.
 
 Para produção local:
 
-```bash
+~~~bash
 npm run build
 npm start
-```
+~~~
 
 ## Funcionalidades
 
@@ -47,16 +47,16 @@ Configure credenciais somente nas variáveis privadas da hospedagem. .env.exampl
 
 ## Validar
 
-```bash
+~~~bash
 npm run build
 npm test
 npm run test:e2e
-```
+~~~
 
 A suíte de navegador cobre o modo legado de contas e inicia e encerra seu servidor automaticamente e usa SQLite exclusivo em /tmp/the-ghost-e2e. Seus registros de teste não entram no banco do produto. Os testes de API validam autenticação, isolamento, persistência, concorrência, parcelas, idempotência e estornos. Provedores externos são simulados nesses testes; isso não confirma chave, quota ou conexão real.
 
 ## Stack e assets
 
-React, TypeScript, Vite, Express, Three.js, GSAP e Lucide. SQLite local e Supabase na publicação; adaptador pg legado disponível. Fontes Anton e IBM Plex Mono com licença OFL, servidas localmente. Geometria world-atlas/Natural Earth em domínio público. Texturas locais Solar System Scope/INOVE, CC BY 4.0, com [origem e créditos](public/textures/README.md).
+React, TypeScript, Vite, Express, Three.js, GSAP e Lucide. SQLite local e Supabase na publicação; adaptador pg legado disponível. Fontes Inter e Space Grotesk com licença OFL. Geometria world-atlas/Natural Earth em domínio público. Texturas locais Solar System Scope/INOVE, CC BY 4.0, com [origem e créditos](public/textures/README.md).
 
 Skill instalada: [.agents/skills/atommic/SKILL.md](.agents/skills/atommic/SKILL.md).

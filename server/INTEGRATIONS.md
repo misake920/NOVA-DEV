@@ -4,7 +4,7 @@ O servidor atende na interface local `127.0.0.1`, com JSON em `/api`. Em produç
 
 ## Autenticação e persistência
 
-O padrão GHOST_ACCESS_MODE=owner abre um único workspace pessoal sem formulário de e-mail ou senha. Acesso local exige conexão por loopback. Na Vercel, o backend verifica via API do projeto que Vercel Authentication protege All Deployments; usa VERCEL_TOKEN, VERCEL_PROJECT_ID e VERCEL_ORG_ID quando aplicável. Sem essa proteção verificada, os dados pessoais e endpoints de provedores permanecem indisponíveis. Não libere convidados, compartilhamentos nem bypasses no projeto pessoal. O modo legado accounts mantém scrypt, sessões privadas e isolamento de contas para instalações existentes e testes.
+O padrão GHOST_ACCESS_MODE=owner abre um único workspace pessoal sem formulário de e-mail ou senha. Acesso local exige conexão por loopback. Na Vercel, a autenticação é realizada pela proteção All Deployments antes de qualquer rota chegar ao aplicativo. A publicação confere a configuração e define GHOST_DEPLOYMENT_PROTECTION=vercel no servidor. Sem essa declaração, o acesso pessoal permanece indisponível. A aplicação não exige tokens de gerenciamento da Vercel e não acompanha mudanças posteriores nos membros ou proteção da hospedagem. Não libere convidados, compartilhamentos nem bypasses no projeto pessoal. O modo legado accounts mantém scrypt, sessões privadas e isolamento de contas para instalações existentes e testes.
 
 Sem Supabase ou conexão externa, fora de Vercel, o backend usa SQLite no arquivo `GHOST_DATABASE_PATH`, padrão `/workspace/ghost-data/the-ghost.sqlite`, fora do checkout. O processo requer Node.js 22.13 ou superior; o ambiente usado na validação possui Node.js 24.19.0. SQLite precisa de volume persistente e backup; não utilizar o arquivo do ambiente como substituto de um banco na nuvem.
 
@@ -32,7 +32,7 @@ Clientes e oportunidades com registros dependentes não podem ser removidos sile
 | `SUPABASE_URL` | URL do projeto Supabase. |
 | `SUPABASE_SECRET_KEY` / `SUPABASE_SERVICE_ROLE_KEY` | Chave privada da Data API, somente no servidor. |
 | `GHOST_ACCESS_MODE` | owner por padrão; accounts é o modo legado. |
-| `VERCEL_TOKEN` / `VERCEL_PROJECT_ID` | Verificação privada da proteção All Deployments. |
+| `GHOST_DEPLOYMENT_PROTECTION` | Declaração da proteção da hospedagem, configurada pela publicação após conferir All Deployments. |
 | `DATABASE_URL` / `POSTGRES_URL` | Conexão direta opcional legada. |
 
 Nunca colocar chaves privadas em variáveis `VITE_*`, no código do cliente, em commits ou nas instruções públicas. O cadastro manual, CRM e financeiro não precisam de chave Places ou IA, mas precisam da conexão persistente e da proteção de acesso na hospedagem. Credenciais ausentes produzem estados de indisponibilidade, sem simular buscas nem gerações reais.

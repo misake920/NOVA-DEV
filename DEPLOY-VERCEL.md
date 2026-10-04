@@ -15,7 +15,7 @@ GHOST_ACCESS_MODE=owner é o padrão. O aplicativo não solicita cadastro, e-mai
 
 Na Vercel, abra Settings → Deployment Protection → Vercel Authentication e selecione **All Deployments**, incluindo produção. Use seu projeto pessoal, com acesso somente à sua conta. Não conceda convidados, links de compartilhamento ou bypasses de proteção. Todas as rotas, incluindo /api, devem estar protegidas. A primeira visita pode solicitar autenticação da própria Vercel; quando já estiver conectado à Vercel, não há formulário de login adicional no aplicativo.
 
-O backend verifica pela API da Vercel que o projeto está em All Deployments antes de disponibilizar o workspace pessoal. Adicione VERCEL_TOKEN nas variáveis privadas do servidor com acesso ao projeto e VERCEL_PROJECT_ID. Se o projeto pertence a uma equipe, também VERCEL_ORG_ID. O token nunca é enviado ao navegador. Se faltar proteção/conexão, a API permanece indisponível em vez de liberar os dados pessoais na Internet.
+Depois de verificar que All Deployments está ativo e que o projeto permite acesso somente ao proprietário, a publicação define GHOST_DEPLOYMENT_PROTECTION=vercel no servidor. Esse campo declara a configuração da hospedagem; a autenticação dos visitantes é feita pela Vercel antes de chegar ao aplicativo. Não é necessário fornecer VERCEL_TOKEN, VERCEL_PROJECT_ID ou VERCEL_ORG_ID para abrir o site. Mudanças posteriores na proteção ou nos membros precisam ser revisadas na Vercel; o aplicativo não fiscaliza alterações na conta.
 
 Para dados de uma instalação anterior em modo accounts, GHOST_OWNER_USER_ID pode apontar para o ID da conta existente. Não altere esse campo depois de iniciar uma operação nova sem verificar onde os dados foram gravados. Modo accounts e conexão direta por pg são compatibilidade legada, não são necessários para a instalação pessoal via Supabase.
 
@@ -29,8 +29,7 @@ Com sua conta autenticada na CLI e o projeto vinculado:
 vercel link
 vercel env add SUPABASE_URL production
 vercel env add SUPABASE_SECRET_KEY production
-vercel env add VERCEL_TOKEN production
-vercel env add VERCEL_PROJECT_ID production
+vercel env add GHOST_DEPLOYMENT_PROTECTION production
 vercel --prod
 ~~~
 

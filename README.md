@@ -40,7 +40,7 @@ A fonte não informar um site não confirma a ausência de site. A interface dis
 
 ## Publicação na Vercel
 
-Veja [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md). A aplicação usa uma função Express e a Data API do seu projeto Supabase. Configure SUPABASE_URL e SUPABASE_SECRET_KEY no servidor e execute [supabase/schema.sql](supabase/schema.sql) no SQL Editor do projeto. Não é necessário fornecer DATABASE_URL. O workspace pessoal só abre na hospedagem depois de verificar Vercel Authentication em All Deployments. Sem banco configurado, a API informa indisponibilidade; não utiliza SQLite efêmero como armazenamento de produção.
+Veja [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md). A aplicação usa uma função Express e a Data API do seu projeto Supabase. Configure SUPABASE_URL e SUPABASE_SECRET_KEY no servidor e execute [supabase/schema.sql](supabase/schema.sql) no SQL Editor do projeto. Não é necessário fornecer DATABASE_URL. O workspace pessoal usa Vercel Authentication em All Deployments; a publicação declara a proteção no servidor após conferir as configurações. Não precisa de token Vercel para o funcionamento do site. Sem banco configurado, a API informa indisponibilidade; não utiliza SQLite efêmero como armazenamento de produção.
 
 Configure credenciais somente nas variáveis privadas da hospedagem. .env.example contém nomes, sem valores. Places precisa de sua chave e das condições de uso aplicáveis; IA e Maps JavaScript API são opcionais. [Detalhes das integrações](server/INTEGRATIONS.md).
 

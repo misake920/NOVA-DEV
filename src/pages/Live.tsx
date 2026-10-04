@@ -11,6 +11,7 @@ import {
   type Page,
   type Sale,
 } from "../lib/workspace";
+import "@fontsource/inter/latin-300.css";
 import "./live.css";
 
 function LiveAmount({
@@ -305,9 +306,45 @@ export default function LivePage({
             onClick={() => onNavigate?.("dashboard")}
             aria-label="Voltar ao dashboard"
           >
-            <ArrowLeft size={26} />
-            Voltar à dashboard
+            <ArrowLeft size={18} strokeWidth={1.4} />
+            <span>Dashboard</span>
           </button>
+          <div className="live-broadcast-controls">
+            <div
+              className="live-currency-switch"
+              role="group"
+              aria-label="Moeda dos indicadores ao vivo"
+            >
+              {(["BRL", "EUR", "USD"] as const).map((item) => (
+                <button
+                  key={item}
+                  aria-pressed={currency === item}
+                  className={currency === item ? "is-active" : ""}
+                  onClick={() => setCurrency(item)}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+            {document.fullscreenEnabled && (
+              <button
+                className="live-fullscreen-button"
+                onClick={() => void toggleFullscreen()}
+                aria-pressed={fullscreen}
+              >
+                {fullscreen ? (
+                  <Minimize2 size={16} strokeWidth={1.3} />
+                ) : (
+                  <Maximize2 size={16} strokeWidth={1.3} />
+                )}
+                <span>{fullscreen ? "Sair da tela cheia" : "Tela cheia"}</span>
+              </button>
+            )}
+            <button className="live-add-sale" onClick={onAddSale}>
+              <Plus size={16} strokeWidth={1.3} />
+              <span>Adicionar venda</span>
+            </button>
+          </div>
         </div>
         <div className="live-broadcast-identity live-reveal">
           <div className="live-brand-plaque">
@@ -322,14 +359,14 @@ export default function LivePage({
               <path
                 d="m25 17-16 19 16 16M47 17l16 19-16 16"
                 stroke="#ff617f"
-                strokeWidth="7"
+                strokeWidth="3.5"
                 strokeLinejoin="miter"
                 strokeLinecap="square"
               />
               <path
                 d="m45 8-19 56"
                 stroke="#ff617f"
-                strokeWidth="8"
+                strokeWidth="4"
                 strokeLinecap="square"
               />
               <path d="m41 20-9 28" stroke="#ff9aad" strokeWidth="1.5" />
@@ -366,10 +403,14 @@ export default function LivePage({
             <h2 id="live-total-title">FATURAMENTO CONFIRMADO</h2>
             <span>
               <i className={live ? "" : "is-offline"} />
-              CM · LIVE 01
+              GHOST · LIVE
             </span>
           </div>
-          <div className="live-total-value">
+          <div
+            className={
+              "live-total-value" + (todayRevenue >= 100000000 ? " is-long" : "")
+            }
+          >
             <span className="live-value-currency">{currencySymbol}</span>
             <LiveAmount
               value={todayRevenue}
@@ -380,7 +421,7 @@ export default function LivePage({
           </div>
           <div className="live-total-bottomline">
             <span className={!live ? "is-offline" : ""}>
-              <Radio size={25} />
+              <Radio size={16} strokeWidth={1.3} />
               {live ? "Atualização automática" : "Aguardando reconexão"}
             </span>
             {comparison === null ? (
@@ -409,24 +450,25 @@ export default function LivePage({
 
         <section
           className="live-trend-section live-reveal"
-          aria-labelledby="live-trend-title"
+          aria-label="Faturamento por horário, hoje e ontem"
+          aria-description={
+            "Valores após descontos, em " +
+            currency +
+            ". " +
+            (todaySeries.carried + yesterdaySeries.carried > 0
+              ? "Vendas registradas em outro dia são exibidas às 00:00."
+              : "")
+          }
         >
-          <div className="live-trend-heading">
-            <div>
-              <span className="live-trend-eyebrow">DESEMPENHO POR HORÁRIO</span>
-              <h2 id="live-trend-title">Tendência de vendas</h2>
-              <p>Receita confirmada ao longo do dia</p>
-            </div>
-            <div className="live-chart-legend">
-              <span>
-                <i />
-                Hoje
-              </span>
-              <span>
-                <i />
-                <span className="sr-only">Ontem</span>
-              </span>
-            </div>
+          <div className="live-chart-legend" aria-label="Séries do gráfico">
+            <span>
+              <i />
+              Hoje
+            </span>
+            <span>
+              <i />
+              Ontem
+            </span>
           </div>
           <NeonChart
             points={todaySeries.points}
@@ -462,16 +504,24 @@ export default function LivePage({
           </button>
           <button onClick={() => onNavigate?.("finance")}>
             <span>TICKET MÉDIO</span>
-            <strong>
+            <strong
+              className={money(ticket, currency).length > 12 ? "is-long" : ""}
+            >
               <LiveAmount value={ticket} currency={currency} paused={paused} />
             </strong>
             <small>por projeto</small>
           </button>
-          <button onClick={() => onNavigate?.("finance")}>
-            <span title="Lucro em regime de caixa: recebimentos líquidos menos despesas pagas.">
-              LUCRO DE HOJE
-            </span>
-            <strong className={cashProfit < 0 ? "is-negative" : ""}>
+          <button
+            onClick={() => onNavigate?.("finance")}
+            title="Lucro em regime de caixa: recebimentos líquidos menos despesas pagas. A margem usa esses recebimentos; vendas a prazo entram nesse indicador quando recebidas."
+          >
+            <span>LUCRO DE HOJE</span>
+            <strong
+              className={
+                (cashProfit < 0 ? "is-negative " : "") +
+                (money(cashProfit, currency).length > 12 ? "is-long" : "")
+              }
+            >
               <LiveAmount
                 value={cashProfit}
                 currency={currency}
@@ -489,64 +539,11 @@ export default function LivePage({
         </section>
         <footer className="live-broadcast-footer">
           <span>
-            <i />A tela acompanha automaticamente as novas vendas registradas
-            por <b>{state.profile.name}</b>
+            <i />
+            Atualiza automaticamente · <b>{state.profile.name}</b>
           </span>
+          <span className="live-sync-label">Sincronizado às {syncLabel}</span>
         </footer>
-        <aside
-          className="live-utility-toolbar"
-          aria-label="Controles do Ao vivo"
-        >
-          <div className="live-broadcast-controls">
-            <div
-              className="live-currency-switch"
-              role="group"
-              aria-label="Moeda dos indicadores ao vivo"
-            >
-              {(["BRL", "EUR", "USD"] as const).map((item) => (
-                <button
-                  key={item}
-                  aria-pressed={currency === item}
-                  className={currency === item ? "is-active" : ""}
-                  onClick={() => setCurrency(item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-            {document.fullscreenEnabled && (
-              <button
-                className="live-fullscreen-button"
-                onClick={() => void toggleFullscreen()}
-                aria-pressed={fullscreen}
-              >
-                {fullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-                <span>{fullscreen ? "Sair da tela cheia" : "Tela cheia"}</span>
-              </button>
-            )}
-            <button className="live-add-sale" onClick={onAddSale}>
-              <Plus size={15} />
-              <span>Adicionar venda</span>
-            </button>
-          </div>
-        </aside>
-        <div className="live-chart-footnote">
-          <span>
-            Valores após descontos · {currency} · {timezone}
-          </span>
-          <span>Última atualização: {syncLabel}</span>
-        </div>
-        {todaySeries.carried + yesterdaySeries.carried > 0 && (
-          <p className="live-carried-note">
-            Vendas datadas de hoje ou ontem que foram registradas em outro dia
-            entram no horário de abertura, às 00:00.
-          </p>
-        )}
-        <p className="live-accounting-note">
-          Lucro em regime de caixa: recebimentos líquidos menos despesas pagas.
-          A margem usa esses recebimentos; vendas a prazo entram nesse indicador
-          quando recebidas.
-        </p>
       </main>
     </div>
   );

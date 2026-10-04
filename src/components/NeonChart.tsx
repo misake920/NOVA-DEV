@@ -237,19 +237,32 @@ export default function NeonChart({
             y1={TOP}
             y2={BASE}
           >
-            <stop offset="0" stopColor="#ff254e" stopOpacity=".34" />
-            <stop offset=".6" stopColor="#ff254e" stopOpacity=".085" />
-            <stop offset="1" stopColor="#ff254e" stopOpacity="0" />
+            <stop offset="0" stopColor="#ff1238" stopOpacity=".19" />
+            <stop offset=".6" stopColor="#ff1238" stopOpacity=".035" />
+            <stop offset="1" stopColor="#ff1238" stopOpacity="0" />
+          </linearGradient>
+          <linearGradient
+            id={`neon-core-${unique}`}
+            gradientUnits="userSpaceOnUse"
+            x1={LEFT}
+            x2={RIGHT}
+            y1="0"
+            y2="0"
+          >
+            <stop offset="0" stopColor="#ffb3c0" />
+            <stop offset=".28" stopColor="#fff0f3" />
+            <stop offset=".65" stopColor="#ff96aa" />
+            <stop offset="1" stopColor="#ffe2e9" />
           </linearGradient>
           <filter
             id={`neon-blur-${unique}`}
             filterUnits="userSpaceOnUse"
-            x={LEFT - 20}
-            y={TOP - 20}
-            width={RIGHT - LEFT + 40}
-            height={BASE - TOP + 40}
+            x={LEFT - 40}
+            y={TOP - 40}
+            width={RIGHT - LEFT + 80}
+            height={BASE - TOP + 80}
           >
-            <feGaussianBlur stdDeviation="3.5" />
+            <feGaussianBlur stdDeviation="9" />
           </filter>
           <filter
             id={`neon-soft-${unique}`}
@@ -259,7 +272,7 @@ export default function NeonChart({
             width={RIGHT - LEFT + 24}
             height={BASE - TOP + 24}
           >
-            <feGaussianBlur stdDeviation="1.2" />
+            <feGaussianBlur stdDeviation="2.4" />
           </filter>
           <linearGradient
             id={`neon-grid-${unique}`}
@@ -289,8 +302,10 @@ export default function NeonChart({
               y1={y}
               y2={y}
               stroke="#ffffff"
+              strokeWidth=".55"
               strokeOpacity={ratio === 0 ? ".16" : ".065"}
               strokeDasharray={ratio === 0 ? "0" : "2 5"}
+              vectorEffect="non-scaling-stroke"
             />
           );
         })}
@@ -302,7 +317,9 @@ export default function NeonChart({
             y1={BASE}
             y2={BASE + 5}
             stroke="#ffffff"
+            strokeWidth=".55"
             strokeOpacity=".08"
+            vectorEffect="non-scaling-stroke"
           />
         ))}
         {geometry.comparisonLine && (
@@ -310,8 +327,8 @@ export default function NeonChart({
             d={geometry.comparisonLine}
             fill="none"
             stroke="#dce4f5"
-            strokeOpacity=".94"
-            strokeWidth="2"
+            strokeOpacity=".5"
+            strokeWidth=".7"
             strokeLinejoin="round"
             strokeLinecap="round"
             vectorEffect="non-scaling-stroke"
@@ -329,27 +346,31 @@ export default function NeonChart({
             <path
               d={geometry.line}
               fill="none"
-              stroke="#ff254e"
-              strokeWidth="8"
-              strokeOpacity=".34"
+              stroke="#ff0032"
+              strokeWidth="12"
+              strokeOpacity=".65"
               filter={`url(#neon-blur-${unique})`}
+              strokeLinejoin="round"
+              strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
             />
             <path
               d={geometry.line}
               fill="none"
-              stroke="#ff5271"
-              strokeWidth="4.5"
-              strokeOpacity=".6"
+              stroke="#ff1747"
+              strokeWidth="4"
+              strokeOpacity=".9"
               filter={`url(#neon-soft-${unique})`}
+              strokeLinejoin="round"
+              strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
             />
             <path
               className="neon-chart-stroke"
               d={geometry.line}
               fill="none"
-              stroke="#ff5271"
-              strokeWidth="2.8"
+              stroke={`url(#neon-core-${unique})`}
+              strokeWidth="1.1"
               strokeLinejoin="round"
               strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
@@ -403,16 +424,19 @@ export default function NeonChart({
               y1={TOP}
               y2={BASE}
               stroke="#ff4765"
-              strokeOpacity=".6"
+              strokeWidth=".6"
+              strokeOpacity=".45"
               strokeDasharray="3 4"
+              vectorEffect="non-scaling-stroke"
             />
             <circle
               cx={point.x}
               cy={point.y}
-              r="6"
+              r="3.2"
               fill="#fff2ef"
               stroke="#ff003c"
-              strokeWidth="3"
+              strokeWidth=".8"
+              vectorEffect="non-scaling-stroke"
             />
           </g>
         )}

@@ -660,7 +660,10 @@ export class UnavailableStore {
   kind = "unconfigured";
   persistent = false;
 
+  constructor({ supabase = false } = {}) { this.supabase = supabase; }
+
   async initialize() {
+    if (this.supabase) throw new StoreError(503, "SUPABASE_NOT_CONFIGURED", "Conecte seu projeto Supabase nas configurações do servidor para abrir seu painel.");
     throw new StoreError(503, "DATABASE_NOT_CONFIGURED", "Configure DATABASE_URL ou POSTGRES_URL com um banco PostgreSQL persistente para esta implantação.");
   }
 
@@ -678,11 +681,17 @@ export class UnavailableStore {
 }
 
 export async function openStore(env = process.env) {
+  if (env.SUPABASE_URL || env.SUPABASE_SECRET_KEY || env.SUPABASE_SERVICE_ROLE_KEY) {
+    const { SupabaseStore } = await import('./supabase-store.mjs');
+    const store = new SupabaseStore({ env });
+    await store.initialize();
+    return store;
+  }
   const connectionString = env.DATABASE_URL || env.POSTGRES_URL;
   const store = connectionString
     ? new PostgresStore(connectionString, { env })
     : env.VERCEL
-      ? new UnavailableStore()
+      ? new UnavailableStore({ supabase: env.NODE_ENV !== 'test' && env.GHOST_ACCESS_MODE !== 'accounts' })
       : new SQLiteStore(env.SQLITE_PATH || env.GHOST_DATABASE_PATH || "/workspace/ghost-data/the-ghost.sqlite");
   await store.initialize();
   return store;

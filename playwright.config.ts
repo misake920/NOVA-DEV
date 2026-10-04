@@ -13,7 +13,8 @@ export default defineConfig({
       GHOST_DATABASE_PATH: "/tmp/the-ghost-e2e/browser-" + Date.now() + ".sqlite",
       PORT: "5173",
       SERVE_DIST: "true",
-      NODE_ENV: "development"
+      NODE_ENV: "development",
+      GHOST_ACCESS_MODE: "accounts"
     },
   },
   use: {

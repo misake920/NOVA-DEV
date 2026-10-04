@@ -2,6 +2,7 @@ import { createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual } fr
 import { promisify } from 'node:util';
 import express from 'express';
 import { openStore } from './store.mjs';
+import { createOwnerAccess } from './owner-access.mjs';
 import { initialWorkspace, applyCommand, applyOverdue, overdueEvents, DomainError, authValidation } from './workspace.mjs';
 
 const scrypt = promisify(scryptCallback);
@@ -38,6 +39,9 @@ function cookieValue(req) {
 
 export function createWorkspaceApi({ env = process.env, store: injectedStore } = {}) {
   const router = express.Router();
+  const ownerMode = (env.GHOST_ACCESS_MODE || (env.NODE_ENV === 'test' ? 'accounts' : 'owner')) === 'owner';
+  const checkOwnerAccess = createOwnerAccess({ env });
+  const ownerId = env.GHOST_OWNER_USER_ID || 'ghost-personal-owner';
   let storePromise;
   async function getStore() {
     if (!storePromise) storePromise = Promise.resolve(injectedStore || openStore(env)).then(async (store) => { await store.initialize(); return store; }).catch((error) => { storePromise = undefined; throw error; });
@@ -46,6 +50,18 @@ export function createWorkspaceApi({ env = process.env, store: injectedStore } =
   const cookieSettings = { httpOnly: true, sameSite: 'lax', secure: env.NODE_ENV === 'production' || Boolean(env.VERCEL), path: '/', maxAge: 30 * DAY };
   async function getIdentity(req) {
     const store = await getStore();
+    if (ownerMode) {
+      await checkOwnerAccess(req);
+      let user = await store.findUserById(ownerId);
+      if (!user) {
+        const identity = { id: ownerId, name: env.GHOST_OWNER_NAME || 'Você', email: '', passwordHash: '' };
+        try { await store.createUser({ ...identity, workspace: initialWorkspace(identity) }); }
+        catch (error) { if (error.code !== 'EMAIL_EXISTS') throw error; }
+        user = await store.findUserById(ownerId);
+        if (!user) throw new DomainError(503, 'OWNER_UNAVAILABLE', 'Não foi possível abrir seu espaço pessoal.');
+      }
+      return { store, user };
+    }
     const token = cookieValue(req);
     if (!token) return { store, user: null };
     const session = await store.getSession(hashToken(token));
@@ -86,12 +102,13 @@ export function createWorkspaceApi({ env = process.env, store: injectedStore } =
     try {
       const { store, user } = await getIdentity(req);
       const workspace = user ? await store.readWorkspace(user.id) : null;
-      res.json({ user: user ? sessionUser(user, workspace) : null, databaseReady: true });
+      res.json({ user: user ? sessionUser(user, workspace) : null, databaseReady: true, ...(ownerMode ? { accessMode: 'owner' } : {}) });
     } catch (error) {
-      if (error?.status === 503) return res.status(503).json({ user: null, databaseReady: false, error: { code: error.code || 'DATABASE_UNAVAILABLE', message: error.message } });
+      if (error?.status === 503) return res.status(503).json({ user: null, databaseReady: false, accessMode: ownerMode ? 'owner' : 'accounts', error: { code: error.code || 'DATABASE_UNAVAILABLE', message: error.message } });
       next(error);
     }
   });
+  router.use('/auth', (req, _res, next) => ownerMode ? next(new DomainError(404, 'AUTH_DISABLED', 'O acesso pessoal não usa cadastro nem senha.')) : next());
   router.post('/auth/register', authLimit, async (req, res, next) => {
     try {
       const input = authValidation.object(req.body);

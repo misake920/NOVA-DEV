@@ -11,10 +11,11 @@ async function request<T>(url: string, body?: unknown): Promise<T> {
   if (!response.ok) throw new RequestError(data.error?.message || 'Não foi possível concluir a ação.', response.status, data.error?.code);
   return data as T;
 }
-interface ContextValue { user: SessionUser | null; workspace: Workspace | null; loading: boolean; error: string; databaseReady: boolean; live: boolean; lastSync: number; refresh: () => Promise<void>; command: (type: string, payload: unknown) => Promise<Workspace>; login: (email: string, password: string) => Promise<void>; register: (name: string, email: string, password: string) => Promise<void>; logout: () => Promise<void>; reconnect: () => Promise<void> }
+interface ContextValue { accessMode: 'owner' | 'accounts'; user: SessionUser | null; workspace: Workspace | null; loading: boolean; error: string; databaseReady: boolean; live: boolean; lastSync: number; refresh: () => Promise<void>; command: (type: string, payload: unknown) => Promise<Workspace>; login: (email: string, password: string) => Promise<void>; register: (name: string, email: string, password: string) => Promise<void>; logout: () => Promise<void>; reconnect: () => Promise<void> }
 const Context = createContext<ContextValue | null>(null);
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SessionUser | null>(null), [workspace, setWorkspace] = useState<Workspace | null>(null), [loading, setLoading] = useState(true), [error, setError] = useState(''), [databaseReady, setDatabaseReady] = useState(true), [live, setLive] = useState(false), [lastSync, setLastSync] = useState(0);
+  const [accessMode, setAccessMode] = useState<'owner' | 'accounts'>('owner');
   const latest = useRef<Workspace | null>(null), refreshing = useRef(false), generation = useRef(0);
   const accept = useCallback((value: Workspace) => { if (!latest.current || value.version >= latest.current.version) { latest.current = value; setWorkspace(value); } setLastSync(Date.now()); setLive(true); }, []);
   const refresh = useCallback(async () => { if (refreshing.current) return; refreshing.current = true; const ownGeneration = generation.current;
@@ -23,7 +24,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     finally { refreshing.current = false; }
   }, [accept]);
   const session = useCallback(async (showLoading = true) => { if(showLoading) setLoading(true); setError('');
-    try { const value = await request<{ user: SessionUser | null; databaseReady: boolean }>('/api/session'); setUser(value.user); setDatabaseReady(value.databaseReady !== false); if (value.user) { const state = await request<Workspace>('/api/workspace'); accept(state); } }
+    try { const value = await request<{ user: SessionUser | null; databaseReady: boolean; accessMode?: 'owner' | 'accounts' }>('/api/session'); setAccessMode(value.accessMode || 'accounts'); setUser(value.user); setDatabaseReady(value.databaseReady !== false); if (value.user) { const state = await request<Workspace>('/api/workspace'); accept(state); } }
     catch (e) { setError(e instanceof Error ? e.message : 'Não foi possível acessar o servidor.'); setDatabaseReady(false); setLive(false); }
     finally { if(showLoading) setLoading(false); }
   }, [accept]);
@@ -38,7 +39,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     return value;
   }, [accept, refresh]);
   const logout = async () => { await request('/api/auth/logout', {}); generation.current++; latest.current = null; setWorkspace(null); setUser(null); setLive(false); setError(''); };
-  return <Context.Provider value={{ user, workspace, loading, error, databaseReady, live, lastSync, refresh, command, login: (email, password) => authenticate('/api/auth/login', { email, password }), register: (name, email, password) => authenticate('/api/auth/register', { name, email, password }), logout, reconnect: () => session(false) }}>{children}</Context.Provider>;
+  return <Context.Provider value={{ accessMode, user, workspace, loading, error, databaseReady, live, lastSync, refresh, command, login: (email, password) => authenticate('/api/auth/login', { email, password }), register: (name, email, password) => authenticate('/api/auth/register', { name, email, password }), logout, reconnect: () => session(false) }}>{children}</Context.Provider>;
 }
 export function useSession() { const value = useContext(Context); if (!value) throw new Error('WorkspaceProvider ausente.'); return value; }
 export function useWorkspace() { const value = useSession(); if (!value.workspace) throw new Error('A sessão precisa estar carregada.'); return { ...value, state: value.workspace }; }

@@ -22,7 +22,7 @@ npm start
 
 ## Funcionalidades
 
-- Cadastro/login com sessões privadas, dados isolados por conta e perfil persistente.
+- Acesso pessoal direto, sem cadastro ou senha no aplicativo; proteção da implantação pela Vercel e perfil persistente.
 - Dashboard com saudação por fuso, relógio, indicadores financeiros, gráficos, funil, metas, tarefas e atividade real.
 - Atualização entre sessões por consulta ao servidor a cada cinco segundos, com status e última atualização.
 - Clientes, contatos, etiquetas, notas, histórico, revisão de duplicatas, propostas e tarefas.
@@ -40,7 +40,7 @@ A fonte não informar um site não confirma a ausência de site. A interface dis
 
 ## Publicação na Vercel
 
-Veja [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md). A aplicação usa uma função Express e PostgreSQL externo com TLS. DATABASE_URL é necessário para autenticação e dados de negócio na Vercel. Sem banco configurado, a API informa indisponibilidade; não utiliza SQLite efêmero como armazenamento de produção.
+Veja [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md). A aplicação usa uma função Express e a Data API do seu projeto Supabase. Configure SUPABASE_URL e SUPABASE_SECRET_KEY no servidor e execute [supabase/schema.sql](supabase/schema.sql) no SQL Editor do projeto. Não é necessário fornecer DATABASE_URL. O workspace pessoal só abre na hospedagem depois de verificar Vercel Authentication em All Deployments. Sem banco configurado, a API informa indisponibilidade; não utiliza SQLite efêmero como armazenamento de produção.
 
 Configure credenciais somente nas variáveis privadas da hospedagem. .env.example contém nomes, sem valores. Places precisa de sua chave e das condições de uso aplicáveis; IA e Maps JavaScript API são opcionais. [Detalhes das integrações](server/INTEGRATIONS.md).
 
@@ -52,10 +52,10 @@ npm test
 npm run test:e2e
 ~~~
 
-A suíte de navegador inicia e encerra seu servidor automaticamente e usa SQLite exclusivo em /tmp/the-ghost-e2e. Seus registros de teste não entram no banco do produto. Os testes de API validam autenticação, isolamento, persistência, concorrência, parcelas, idempotência e estornos. Provedores externos são simulados nesses testes; isso não confirma chave, quota ou conexão real.
+A suíte de navegador cobre o modo legado de contas e inicia e encerra seu servidor automaticamente e usa SQLite exclusivo em /tmp/the-ghost-e2e. Seus registros de teste não entram no banco do produto. Os testes de API validam autenticação, isolamento, persistência, concorrência, parcelas, idempotência e estornos. Provedores externos são simulados nesses testes; isso não confirma chave, quota ou conexão real.
 
 ## Stack e assets
 
-React, TypeScript, Vite, Express, pg, Three.js, GSAP e Lucide. SQLite local e PostgreSQL na publicação. Fontes Inter e Space Grotesk com licença OFL. Geometria world-atlas/Natural Earth em domínio público. Sem imagens externas necessárias.
+React, TypeScript, Vite, Express, Three.js, GSAP e Lucide. SQLite local e Supabase na publicação; adaptador pg legado disponível. Fontes Inter e Space Grotesk com licença OFL. Geometria world-atlas/Natural Earth em domínio público. Sem imagens externas necessárias.
 
 Skill instalada: [.agents/skills/atommic/SKILL.md](.agents/skills/atommic/SKILL.md).

@@ -4,11 +4,11 @@ O servidor atende na interface local `127.0.0.1`, com JSON em `/api`. Em produç
 
 ## Autenticação e persistência
 
-Cadastro e login usam senhas derivadas por scrypt, sessões aleatórias com somente o hash armazenado no banco e cookies HttpOnly/SameSite. Cookies Secure são usados em produção. Logout revoga a sessão no servidor. Cada conta possui seu workspace isolado; IDs de outra conta não podem atualizar seus registros ou ser usados como relacionamento.
+O padrão GHOST_ACCESS_MODE=owner abre um único workspace pessoal sem formulário de e-mail ou senha. Acesso local exige conexão por loopback. Na Vercel, o backend verifica via API do projeto que Vercel Authentication protege All Deployments; usa VERCEL_TOKEN, VERCEL_PROJECT_ID e VERCEL_ORG_ID quando aplicável. Sem essa proteção verificada, os dados pessoais e endpoints de provedores permanecem indisponíveis. Não libere convidados, compartilhamentos nem bypasses no projeto pessoal. O modo legado accounts mantém scrypt, sessões privadas e isolamento de contas para instalações existentes e testes.
 
-Sem PostgreSQL, fora de Vercel, o backend usa SQLite no arquivo `GHOST_DATABASE_PATH`, padrão `/workspace/ghost-data/the-ghost.sqlite`, fora do checkout. O processo requer Node.js 22.13 ou superior; o ambiente usado na validação possui Node.js 24.19.0. SQLite precisa de volume persistente e backup; não utilizar o arquivo do ambiente como substituto de um banco na nuvem.
+Sem Supabase ou conexão externa, fora de Vercel, o backend usa SQLite no arquivo `GHOST_DATABASE_PATH`, padrão `/workspace/ghost-data/the-ghost.sqlite`, fora do checkout. O processo requer Node.js 22.13 ou superior; o ambiente usado na validação possui Node.js 24.19.0. SQLite precisa de volume persistente e backup; não utilizar o arquivo do ambiente como substituto de um banco na nuvem.
 
-Quando `DATABASE_URL` ou `POSTGRES_URL` está definida, o adapter utiliza PostgreSQL através de `pg`. Em Vercel, PostgreSQL é obrigatório: sua ausência resulta em 503 e `databaseReady:false`, sem usar filesystem efêmero. O adapter mantém verificação TLS. A URL precisa chegar ao servidor, nunca ao frontend. A validação nesta máquina cobre SQLite, inclusive reinício; PostgreSQL exige conexão e validação na implantação de destino.
+Quando SUPABASE_URL e SUPABASE_SECRET_KEY (ou service_role legada) estão definidas, o adaptador utiliza a Data API privada do Supabase, com RPCs transacionais criadas por supabase/schema.sql. Nenhuma chave secreta chega ao frontend. Sem conexão persistente, Vercel responde 503 e databaseReady:false; não usa filesystem efêmero. DATABASE_URL ou POSTGRES_URL continuam disponíveis como adaptação legada e não são exigidas para Supabase. A conexão remota só pode ser validada depois de configurar as credenciais reais do projeto.
 
 O estado JSON versionado da conta, o histórico de comandos e seus resultados são gravados na mesma transação. `expectedVersion` evita sobrescrever outra sessão quando informado; `requestId` evita executar uma atualização novamente, inclusive após reinício. Reusar o mesmo identificador com outra operação ou payload é rejeitado. O histórico de atividades e notificações faz parte dos dados persistidos. A atualização entre telas e sessões utiliza polling real do workspace a cada cinco segundos, sem simular eventos de negócios.
 
@@ -29,9 +29,13 @@ Clientes e oportunidades com registros dependentes não podem ser removidos sile
 | `APP_ORIGIN`               | Origem exata autorizada para POSTs quando um proxy de produção alterar o Host.                                                                |
 | `PORT`                     | Porta da API, padrão `3001`.                                                                                                                  |
 | `GHOST_DATABASE_PATH` | Arquivo SQLite local, fora de Vercel; padrão `/workspace/ghost-data/the-ghost.sqlite`. |
-| `DATABASE_URL` / `POSTGRES_URL` | URL PostgreSQL privada; obrigatória em Vercel. |
+| `SUPABASE_URL` | URL do projeto Supabase. |
+| `SUPABASE_SECRET_KEY` / `SUPABASE_SERVICE_ROLE_KEY` | Chave privada da Data API, somente no servidor. |
+| `GHOST_ACCESS_MODE` | owner por padrão; accounts é o modo legado. |
+| `VERCEL_TOKEN` / `VERCEL_PROJECT_ID` | Verificação privada da proteção All Deployments. |
+| `DATABASE_URL` / `POSTGRES_URL` | Conexão direta opcional legada. |
 
-Nunca colocar chaves privadas em variáveis `VITE_*`, no código do cliente, em commits ou nas instruções públicas. O cadastro manual, CRM e financeiro funcionam sem credenciais externas. Credenciais ausentes produzem estados de indisponibilidade, sem simular buscas nem gerações reais.
+Nunca colocar chaves privadas em variáveis `VITE_*`, no código do cliente, em commits ou nas instruções públicas. O cadastro manual, CRM e financeiro não precisam de chave Places ou IA, mas precisam da conexão persistente e da proteção de acesso na hospedagem. Credenciais ausentes produzem estados de indisponibilidade, sem simular buscas nem gerações reais.
 
 ## Uso somente com Places
 
@@ -57,6 +61,6 @@ Chamadas de detalhes acrescentam website e telefone somente se fornecidos. A aus
 
 Os dados necessários da empresa são enviados ao provedor de IA configurado somente quando o usuário solicita a geração. O provedor recebe nome, categoria, endereço, oferta e contexto de abordagem; não recebe a chave privada do Google nem dados extras do resultado. Dados externos ficam no conteúdo da mensagem, separados das instruções de sistema. Toda mensagem precisa de revisão humana. A aplicação não envia campanhas nem registra entregas de email/WhatsApp.
 
-Os endpoints Places e IA exigem uma sessão autenticada. A exceção é explicitamente `NODE_ENV=test` para os testes isolados do contrato antigo, nunca configuração de produção. Pausar a prospecção no perfil bloqueia novas buscas e gerações reais. Os limites por IP e tentativas de autenticação permanecem em memória e são apropriados para este produto pessoal; uma implantação pública com muitos usuários exige controle distribuído de quotas e abuso. Não configurar confiança indiscriminada em cabeçalhos de proxy. O endpoint aceita POSTs da mesma origem, de loopback para desenvolvimento ou de `APP_ORIGIN` explicitamente configurada, e não expõe CORS aberto.
+Os endpoints Places e IA exigem acesso pessoal protegido ou uma sessão autenticada no modo legado. A exceção é explicitamente `NODE_ENV=test` para os testes isolados do contrato antigo, nunca configuração de produção. Pausar efeitos no perfil controla animações e não bloqueia buscas ou gerações. Os limites por IP e tentativas de autenticação permanecem em memória e são apropriados para este produto pessoal; uma implantação pública com muitos usuários exige controle distribuído de quotas e abuso. Não configurar confiança indiscriminada em cabeçalhos de proxy. O endpoint aceita POSTs da mesma origem, de loopback para desenvolvimento ou de `APP_ORIGIN` explicitamente configurada, e não expõe CORS aberto.
 
 Os testes em `tests/server.test.mjs` usam provedores simulados para validação de contratos, erros, cotas, privacidade de segredos e controle de chamadas. `tests/workspace.test.mjs` verifica autenticação, autorização, persistência após reinício SQLite, idempotência, conflitos de versão, CRUD, recebimentos, estornos e notificações por fuso. Não executam requisições faturáveis nem comprovam conectividade, faturamento ou acesso real aos provedores.

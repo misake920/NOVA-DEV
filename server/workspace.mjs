@@ -182,7 +182,7 @@ export function applyCommand(current, type, rawPayload) {
     const p = { ...state.profile, ...payload };
     const timezone = text(p.timezone, 'fuso', { required: true, max: 100 });
     try { new Intl.DateTimeFormat('en-US', { timeZone: timezone }).format(); } catch { fail('Informe um fuso horário válido.'); }
-    if (email(p.email, true) !== state.profile.email) fail('A troca do email de acesso precisa de verificação específica e não está disponível nesta tela.');
+    if (email(p.email, Boolean(state.profile.email)) !== state.profile.email) fail('A troca do email de acesso precisa de verificação específica e não está disponível nesta tela.');
     const offer = { ...state.profile.offer, ...object(p.offer || {}, 'a oferta') };
     state.profile = { name: text(p.name, 'nome', { required: true, max: 160 }), email: state.profile.email, timezone, currency: choice(p.currency, currencies, 'moeda', 'BRL'), offer: Object.fromEntries(['service', 'benefit', 'audience', 'proof', 'goal'].map((key) => [key, text(offer[key], key, { max: 1500 })])), paused: bool(p.paused, 'pausa'), soundNotifications: bool(p.soundNotifications, 'som'), browserNotifications: bool(p.browserNotifications, 'notificações') };
     event(state, type, '', 'Perfil atualizado');

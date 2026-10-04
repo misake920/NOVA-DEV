@@ -74,8 +74,9 @@ function userRecord(row) {
   return row ? { id: row.id, name: row.name, email: row.email, passwordHash: row.password_hash } : null;
 }
 
-// PostgREST filter values must remain one quoted value, including punctuation.
-const equals = (value) => `eq."${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+// Direct equality operands are literal in PostgREST. URLSearchParams encodes
+// the complete value; extra quotes would become part of the ID being matched.
+const equals = (value) => `eq.${value}`;
 
 function mapResult(result) {
   if (!result || typeof result !== 'object' || Array.isArray(result)) throw unavailable();

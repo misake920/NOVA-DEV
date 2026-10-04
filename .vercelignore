@@ -1,0 +1,16 @@
+.git
+.agents
+.env
+.env.*
+!.env.example
+.vercel
+node_modules
+dist
+tests
+test-results
+playwright-report
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.log
+data

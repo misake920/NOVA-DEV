@@ -1,0 +1,15 @@
+interface:
+  display_name: atommic
+  short_description: Sites marcantes, 3D realista e operação completa
+  default_prompt: Use $atommic para criar um site profissional com hero 3D realista,
+    GSAP, scroll, fontes elegantes e funções completas, aproveitando componentes existentes
+    e economizando créditos.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

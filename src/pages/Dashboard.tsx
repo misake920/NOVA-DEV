@@ -1,0 +1,78 @@
+import { useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react';
+import gsap from 'gsap';
+import { ArrowDownLeft, ArrowUpRight, CalendarClock, ChevronRight, CircleDollarSign, CreditCard, Plus, Radar, Target, TrendingUp, Wallet, Waves } from 'lucide-react';
+import { useWorkspace } from '../lib/WorkspaceContext';
+import { displayDate, localDate, money, pending, installmentBalances, type Currency, type Page } from '../lib/workspace';
+import { EmptyState, Panel } from '../components/ui';
+const Globe = lazy(() => import('../components/Globe'));
+
+function AnimatedValue({ value, currency }: { value: number; currency: Currency }) {
+  const ref = useRef<HTMLSpanElement>(null), previous = useRef(value);
+  useEffect(() => { const el = ref.current; if (!el) return; if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = money(value, currency); previous.current = value; return; } const counter = { value: previous.current }; const tween = gsap.to(counter, { value, duration: .65, ease: 'power2.out', onUpdate: () => { el.textContent = money(Math.round(counter.value), currency); } }); previous.current = value; return () => { tween.kill(); }; }, [value, currency]);
+  return <span ref={ref}>{money(value, currency)}</span>;
+}
+export default function Dashboard({ onNavigate, onAddSale }: { onNavigate: (page: Page, id?: string) => void; onAddSale: () => void }) {
+  const { state, live, lastSync } = useWorkspace(), [currency, setCurrency] = useState<Currency>(state.profile.currency), [range, setRange] = useState(14), [clock, setClock] = useState(new Date());
+  useEffect(() => { const timer = setInterval(() => setClock(new Date()), 1000); return () => clearInterval(timer); }, []);
+  const timezone = state.profile.timezone, today = localDate(timezone, clock);
+  const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: timezone, hour: '2-digit', hourCycle: 'h23' }).format(clock));
+  const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+  const dateLabel = new Intl.DateTimeFormat('pt-BR', { timeZone: timezone, weekday: 'long', day: 'numeric', month: 'long' }).format(clock);
+  const clockLabel = new Intl.DateTimeFormat('pt-BR', { timeZone: timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(clock);
+  const sales = state.sales.filter(s => s.currency === currency && s.status === 'active');
+  const saleIds = new Set(state.sales.filter(s => s.currency === currency).map(s => s.id));
+  const receipts = state.receipts.filter(r => saleIds.has(r.saleId));
+  const refunds = state.refunds.filter(r => saleIds.has(r.saleId));
+  const soldToday = sales.filter(s => s.date === today).reduce((n, s) => n + s.amountMinor, 0);
+  const receivedToday = receipts.filter(r => r.date === today).reduce((n, r) => n + r.amountMinor, 0) - refunds.filter(r => r.date === today).reduce((n, r) => n + r.amountMinor, 0);
+  const outstanding = sales.reduce((n, s) => n + pending(state, s), 0);
+  const expensesToday = state.expenses.filter(e => e.currency === currency && e.paid && e.date === today).reduce((n, e) => n + e.amountMinor, 0);
+  const overdue = sales.filter(s => pending(state, s) > 0 && installmentBalances(state,s).some(i => i.balance > 0 && i.dueDate < today));
+  const openStages = new Set(state.stages.filter(s => s.kind === 'open').map(s => s.id));
+  const openOpportunities = state.opportunities.filter(o => openStages.has(o.stageId));
+  const tasks = [...state.tasks.filter(t => !t.done)].sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+  const dueTasks = tasks.filter(t => t.dueDate <= today);
+  const won = state.opportunities.filter(o => state.stages.find(s => s.id === o.stageId)?.kind === 'won').length;
+  const lost = state.opportunities.filter(o => state.stages.find(s => s.id === o.stageId)?.kind === 'lost').length;
+  const points = useMemo(() => Array.from({ length: range }, (_, i) => {
+    const date = new Date(today + 'T12:00:00Z'); date.setUTCDate(date.getUTCDate() - range + i + 1);
+    const key = date.toISOString().slice(0, 10);
+    return { date: key, inflow: receipts.filter(r => r.date === key).reduce((n, r) => n + r.amountMinor, 0), outflow: state.expenses.filter(e => e.currency === currency && e.paid && e.date === key).reduce((n, e) => n + e.amountMinor, 0) + refunds.filter(r => r.date === key).reduce((n, r) => n + r.amountMinor, 0) };
+  }), [state.version, today, range, currency]);
+  const hasChartData = points.some(p => p.inflow || p.outflow);
+  const max = Math.max(1, ...points.flatMap(p => [p.inflow, p.outflow]));
+  const xy = (v: number, i: number) => [(i / Math.max(1, points.length - 1)) * 620 + 20, 178 - (v / max) * 150];
+  const path = (key: 'inflow' | 'outflow') => points.map((p, i) => (i ? 'L' : 'M') + xy(p[key], i).join(',')).join(' ');
+  const cashChart = useRef<SVGSVGElement>(null);
+  useEffect(() => { if (!cashChart.current || !hasChartData || state.profile.paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; const context = gsap.context(() => { cashChart.current?.querySelectorAll<SVGPathElement>('.chart-line').forEach(el => { const length = el.getTotalLength(); gsap.fromTo(el, { strokeDasharray: length, strokeDashoffset: length }, { strokeDashoffset: 0, duration: 1, ease: 'power2.out' }); }); gsap.fromTo('.chart-fill', { opacity: 0 }, { opacity: 1, duration: .9 }); }, cashChart); return () => context.revert(); }, [state.version, range, currency, hasChartData, state.profile.paused]);
+  const serviceTotals = sales.filter(s => s.date >= points[0].date && s.date <= today).reduce<Record<string, number>>((map, s) => { map[s.service] = (map[s.service] || 0) + s.amountMinor; return map; }, {});
+  const serviceEntries = Object.entries(serviceTotals).sort((a, b) => b[1] - a[1]).slice(0, 4);
+  const metrics = [
+    { title: 'Vendido hoje', value: soldToday, note: 'Vendas registradas hoje', icon: CircleDollarSign, kind: 'red' },
+    { title: 'Recebido hoje', value: receivedToday, note: 'Recebimentos menos estornos', icon: ArrowDownLeft, kind: 'red' },
+    { title: 'A receber', value: outstanding, note: overdue.length ? overdue.length + ' venda(s) com vencimento anterior a hoje' : 'Saldo pendente de todos os períodos', icon: CreditCard, kind: '' },
+    { title: 'Saldo de caixa hoje', value: receivedToday - expensesToday, note: 'Entradas menos saídas de hoje', icon: Wallet, kind: '' },
+  ];
+  return <div className="dashboard-page">
+    <section className="command-hero">
+      <div className="command-copy"><span className="eyebrow"><span className="tiny-line"/> SEU CENTRO DE COMANDO</span><h1>{greeting},<br/><span>{state.profile.name.split(' ')[0]}.</span></h1><p>Encontre oportunidades.<br/>Transforme conversas em conquistas.</p><div className="hero-date"><CalendarClock size={15}/><span>{dateLabel}</span><b>{clockLabel}</b></div><div className="hero-actions"><button className="button button-primary" onClick={onAddSale}><Plus size={17}/>Adicionar venda<ArrowUpRight size={16}/></button><button className="button button-secondary" onClick={() => onNavigate('prospecting')}><Radar size={17}/>Prospectar</button></div></div>
+      <div className="command-globe"><div className="globe-halo"/><Suspense fallback={<div className="globe-placeholder"/>}><Globe country="BR" paused={state.profile.paused} compact/></Suspense></div>
+      <span className="hero-watermark" aria-hidden="true">THE GHOST</span>
+    </section>
+    <div className="section-toolbar"><div><h2>Seu negócio, em tempo real.</h2><p>Hoje · {displayDate(today)} · {currency}</p></div><div className="toolbar"><span className={'live-indicator ' + (live ? '' : 'offline')}><span className="pulse-dot"/>{live ? 'Ao vivo · 5s' : 'Reconectando'}<span className="sr-only">Última atualização {lastSync ? new Date(lastSync).toLocaleTimeString('pt-BR',{timeZone:timezone}) : 'indisponível'}</span></span><label className="sr-only" htmlFor="dashboard-currency">Moeda do dashboard</label><select id="dashboard-currency" value={currency} onChange={e => setCurrency(e.target.value as Currency)}><option>BRL</option><option>EUR</option><option>USD</option></select></div></div>
+    <div className="metrics-grid">{metrics.map(item => <button className={'metric-card ' + item.kind} key={item.title} onClick={() => onNavigate('finance')}><div className="metric-head"><span>{item.title}</span><item.icon size={19}/></div><strong><AnimatedValue value={item.value} currency={currency}/></strong><div className="metric-footer"><span>{item.note}</span><ArrowUpRight size={14}/></div></button>)}</div>
+    <div className="dashboard-main-grid">
+      <Panel className="cash-panel" title="Movimento de caixa" action={<select aria-label="Período do gráfico" value={range} onChange={e => setRange(Number(e.target.value))}><option value={7}>Últimos 7 dias</option><option value={14}>Últimos 14 dias</option><option value={30}>Últimos 30 dias</option></select>}>
+        <div className="chart-summary"><div><span>Recebimentos no período</span><strong>{money(points.reduce((n,p) => n + p.inflow,0),currency)}</strong></div><div className="chart-legend"><span><i className="red-dot"/>Entradas</span><span><i className="gray-dot"/>Saídas e estornos</span></div></div>
+        {!hasChartData ? <EmptyState icon={Waves} title="Seu movimento começa aqui" description="Registre um recebimento ou uma despesa para acompanhar o fluxo de caixa." action={<button className="button button-secondary" onClick={() => onNavigate('finance')}>Abrir financeiro<ArrowUpRight size={15}/></button>}/> : <div className="cash-chart"><svg ref={cashChart} viewBox="0 0 660 208" role="img" aria-label={'Entradas e saídas reais em ' + currency}><defs><linearGradient id="cash-gradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ff102d" stopOpacity=".38"/><stop offset="1" stopColor="#ff102d" stopOpacity="0"/></linearGradient></defs>{[28,78,128,178].map(y => <line key={y} x1="20" x2="640" y1={y} y2={y} stroke="#262327" strokeDasharray="3 6"/>)}<path className="chart-fill" d={path('inflow') + ' L640,178 L20,178 Z'} fill="url(#cash-gradient)"/><path className="chart-line" d={path('outflow')} fill="none" stroke="#aaa0a4" strokeWidth="2"/><path className="chart-line" d={path('inflow')} fill="none" stroke="#ff233f" strokeWidth="3"/>{points.map((p,i) => <g key={p.date} tabIndex={0} role="button" aria-label={displayDate(p.date) + ': entradas ' + money(p.inflow,currency) + ', saídas ' + money(p.outflow,currency)} onClick={() => onNavigate('finance')} onKeyDown={e => {if(e.key === 'Enter') onNavigate('finance');}}><circle cx={xy(p.inflow,i)[0]} cy={xy(p.inflow,i)[1]} r="5" fill="#ff233f" opacity={p.inflow ? 1 : .25}/><title>{displayDate(p.date) + '\nEntradas: ' + money(p.inflow,currency) + '\nSaídas: ' + money(p.outflow,currency)}</title></g>)}<text x="20" y="201" fill="#8e858b" fontSize="10">{displayDate(points[0].date)}</text><text x="640" y="201" textAnchor="end" fill="#8e858b" fontSize="10">{displayDate(today)}</text></svg><span className="muted chart-scale">Escala até {money(max,currency)} · {timezone}</span></div>}
+      </Panel>
+      <Panel className="pipeline-summary" title="Pulso comercial" action={<button className="icon-button" aria-label="Abrir funil" onClick={() => onNavigate('pipeline')}><ArrowUpRight size={18}/></button>}><div className="pipeline-top"><strong>{openOpportunities.length}</strong><div><span>oportunidades abertas</span><small>{won + lost ? Math.round(won / (won + lost) * 100) + '% de conversão entre encerradas' : 'Conversão disponível após encerrar oportunidades'}</small></div></div><div className="stage-bars">{[...state.stages].sort((a,b) => a.order-b.order).map(stage => { const count = state.opportunities.filter(o => o.stageId === stage.id).length; return <button key={stage.id} onClick={() => onNavigate('pipeline')}><span>{stage.name}<b>{count}</b></span><i><em style={{width:state.opportunities.length ? Math.max(2,count/state.opportunities.length*100)+'%' : '0%'}}/></i></button>; })}</div><div className="small-stat"><span>Propostas enviadas</span><b>{state.proposals.filter(p => p.status === 'sent').length}</b></div></Panel>
+    </div>
+    <div className="dashboard-lower-grid">
+      <Panel title="Próximos movimentos" action={<span className="badge">{dueTasks.length} para hoje</span>}>{tasks.length ? <div className="priority-list">{tasks.slice(0,4).map(task => <button key={task.id} onClick={() => onNavigate('agenda',task.id)}><div className="priority-icon"><CalendarClock size={18}/></div><div><b>{task.title}</b><span>{task.dueDate < today ? 'Prazo vencido · ' : task.dueDate === today ? 'Hoje · ' : ''}{displayDate(task.dueDate)}{task.owner ? ' · '+task.owner : ''}</span></div><ChevronRight size={16}/></button>)}</div> : <EmptyState icon={CalendarClock} title="Agenda livre" description="Planeje seus próximos contatos e acompanhe cada oportunidade." action={<button className="text-button" onClick={() => onNavigate('agenda')}>Criar tarefa<Plus size={14}/></button>}/>}</Panel>
+      <Panel title="Vendas por serviço" action={<span className="badge">{currency} · {range} dias</span>}>{serviceEntries.length ? <div className="service-bars">{serviceEntries.map(([name,value]) => <button key={name} onClick={() => onNavigate('finance')}><span>{name}<b>{money(value,currency)}</b></span><i><em style={{width:value/serviceEntries[0][1]*100+'%'}}/></i></button>)}</div> : <EmptyState icon={TrendingUp} title="Cada venda conta" description="Seus serviços aparecerão aqui conforme você registrar as vendas." action={<button className="text-button" onClick={onAddSale}>Adicionar venda<Plus size={14}/></button>}/>}</Panel>
+      <Panel title="Atividade recente" action={<span className="live-tag"><span className="pulse-dot"/>AO VIVO</span>}>{state.activities.length ? <div className="activity-list">{[...state.activities].sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,5).map(activity => <div key={activity.id}><span className="activity-point"/><div><b>{activity.title}</b><small>{new Intl.DateTimeFormat('pt-BR',{timeZone:timezone,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(activity.createdAt))}</small></div></div>)}</div> : <EmptyState icon={Radar} title="Pronto para começar" description="Seu histórico será preenchido pelas ações realizadas no sistema."/>}</Panel>
+    </div>
+    {state.goals.length > 0 && <Panel title="Suas metas"><div className="goals-grid">{state.goals.map(goal => { const ids = new Set(state.sales.filter(s => s.currency === goal.currency).map(s=>s.id)); const current = goal.kind === 'sales' ? state.sales.filter(s => s.currency === goal.currency && s.status === 'active' && s.date >= goal.startDate && s.date <= goal.endDate).reduce((n,s)=>n+s.amountMinor,0) : goal.kind === 'receipts' ? state.receipts.filter(r => ids.has(r.saleId) && r.date >= goal.startDate && r.date <= goal.endDate).reduce((n,r)=>n+r.amountMinor,0)-state.refunds.filter(r=>ids.has(r.saleId)&&r.date>=goal.startDate&&r.date<=goal.endDate).reduce((n,r)=>n+r.amountMinor,0) : state.activities.filter(a=>localDate(timezone,new Date(a.createdAt))>=goal.startDate&&localDate(timezone,new Date(a.createdAt))<=goal.endDate).length; const ratio = goal.target ? Math.max(0,Math.min(100,current/goal.target*100)) : 0; return <button className="goal-card" key={goal.id} onClick={()=>onNavigate('settings')}><Target size={20}/><b>{goal.name}</b><span>{goal.kind==='activities'?current+' / '+goal.target:money(current,goal.currency)+' / '+money(goal.target,goal.currency)}</span><progress value={ratio} max={100}/><small>{Math.round(ratio)}% · até {displayDate(goal.endDate)}</small></button>; })}</div></Panel>}
+  </div>;
+}

@@ -1,15 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
-import {
-  ArrowLeft,
-  CalendarDays,
-  ChevronUp,
-  Maximize2,
-  Minimize2,
-  Plus,
-  Radio,
-} from "lucide-react";
-import BrandMark from "../components/BrandMark";
+import { ArrowLeft, Maximize2, Minimize2, Plus, Radio } from "lucide-react";
 import NeonChart, { type NeonPoint } from "../components/NeonChart";
 import { useToast } from "../components/ui";
 import { useWorkspace } from "../lib/WorkspaceContext";
@@ -246,6 +237,9 @@ export default function LivePage({
   const ticket = todaySales.length
     ? Math.round(todayRevenue / todaySales.length)
     : 0;
+  const cashProfit = receivedToday - expensesToday;
+  const cashMargin =
+    receivedToday > 0 ? (cashProfit / receivedToday) * 100 : null;
   const todaySeries = useMemo(
     () => hourlySeries(todaySales, today, timezone, hour, minute),
     [todaySales, today, timezone, hour, minute],
@@ -260,9 +254,8 @@ export default function LivePage({
       : null;
   const dateLabel = new Intl.DateTimeFormat("pt-BR", {
     timeZone: timezone,
-    weekday: "long",
     day: "2-digit",
-    month: "long",
+    month: "2-digit",
     year: "numeric",
   }).format(clock);
   const timeLabel = new Intl.DateTimeFormat("pt-BR", {
@@ -278,7 +271,11 @@ export default function LivePage({
       timeZoneName: "shortOffset",
     })
       .formatToParts(clock)
-      .find((part) => part.type === "timeZoneName")?.value || timezone;
+      .find((part) => part.type === "timeZoneName")
+      ?.value?.replace(
+        /GMT([+-])(\d)(?!\d)/,
+        (_, sign: string, offset: string) => `GMT${sign}0${offset}`,
+      ) || timezone;
   const syncLabel = lastSync
     ? new Intl.DateTimeFormat("pt-BR", {
         timeZone: timezone,
@@ -306,10 +303,200 @@ export default function LivePage({
           <button
             className="live-back-button"
             onClick={() => onNavigate?.("dashboard")}
+            aria-label="Voltar ao dashboard"
           >
-            <ArrowLeft size={15} />
-            Voltar ao dashboard
+            <ArrowLeft size={26} />
+            Voltar à dashboard
           </button>
+        </div>
+        <div className="live-broadcast-identity live-reveal">
+          <div className="live-brand-plaque">
+            <svg
+              className="live-brand-symbol"
+              width="72"
+              height="72"
+              viewBox="0 0 72 72"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="m25 17-16 19 16 16M47 17l16 19-16 16"
+                stroke="#ff617f"
+                strokeWidth="7"
+                strokeLinejoin="miter"
+                strokeLinecap="square"
+              />
+              <path
+                d="m45 8-19 56"
+                stroke="#ff617f"
+                strokeWidth="8"
+                strokeLinecap="square"
+              />
+              <path d="m41 20-9 28" stroke="#ff9aad" strokeWidth="1.5" />
+            </svg>
+            <span className="live-brand-wordmark">
+              <span>THE</span> <em>GHOST</em>
+            </span>
+            <i />
+            <i />
+          </div>
+          <span className="live-room-label">
+            SALA DE RECEITA <i /> {state.profile.name}
+          </span>
+          <h1>
+            Vendas <span>hoje</span>
+          </h1>
+          <p className="live-calendar-label">
+            <span>{dateLabel}</span>
+            <i>·</i>
+            <time dateTime={clock.toISOString()}>{timeLabel}</time>
+            <b>{zoneLabel}</b>
+          </p>
+        </div>
+      </header>
+
+      <main className="live-broadcast-body">
+        <section
+          className="live-total-plaque live-reveal"
+          aria-labelledby="live-total-title"
+        >
+          <span className="live-edge-diamond is-left" aria-hidden="true" />
+          <span className="live-edge-diamond is-right" aria-hidden="true" />
+          <div className="live-total-topline">
+            <h2 id="live-total-title">FATURAMENTO CONFIRMADO</h2>
+            <span>
+              <i className={live ? "" : "is-offline"} />
+              CM · LIVE 01
+            </span>
+          </div>
+          <div className="live-total-value">
+            <span className="live-value-currency">{currencySymbol}</span>
+            <LiveAmount
+              value={todayRevenue}
+              currency={currency}
+              numeric
+              paused={paused}
+            />
+          </div>
+          <div className="live-total-bottomline">
+            <span className={!live ? "is-offline" : ""}>
+              <Radio size={25} />
+              {live ? "Atualização automática" : "Aguardando reconexão"}
+            </span>
+            {comparison === null ? (
+              <span className="live-no-comparison">
+                Sem histórico de ontem para comparar
+              </span>
+            ) : (
+              <span
+                className={
+                  "live-day-comparison " + (comparison < 0 ? "is-negative" : "")
+                }
+              >
+                <strong>
+                  {comparison > 0 ? "+" : ""}
+                  {new Intl.NumberFormat("pt-BR", {
+                    maximumFractionDigits: 1,
+                  }).format(comparison)}
+                  %
+                </strong>
+                <small>vs. ontem</small>
+              </span>
+            )}
+          </div>
+          <div className="live-total-underlight" aria-hidden="true" />
+        </section>
+
+        <section
+          className="live-trend-section live-reveal"
+          aria-labelledby="live-trend-title"
+        >
+          <div className="live-trend-heading">
+            <div>
+              <span className="live-trend-eyebrow">DESEMPENHO POR HORÁRIO</span>
+              <h2 id="live-trend-title">Tendência de vendas</h2>
+              <p>Receita confirmada ao longo do dia</p>
+            </div>
+            <div className="live-chart-legend">
+              <span>
+                <i />
+                Hoje
+              </span>
+              <span>
+                <i />
+                <span className="sr-only">Ontem</span>
+              </span>
+            </div>
+          </div>
+          <NeonChart
+            points={todaySeries.points}
+            comparisonPoints={yesterdaySeries.points}
+            seriesLabel="Hoje"
+            comparisonLabel="Ontem"
+            currency={currency}
+            paused={paused}
+            empty={todaySales.length === 0 && yesterdaySales.length === 0}
+            emptyTitle=""
+            emptyDescription=""
+            ticks={Array.from({ length: 12 }, (_, index) => ({
+              label: String(index * 2).padStart(2, "0"),
+              position: (index * 2) / 24,
+            }))}
+            ariaLabel={
+              "Vendas reais por hora em " + currency + ", hoje e ontem"
+            }
+            className="live-large-chart"
+          />
+        </section>
+
+        <section
+          className="live-broadcast-summary live-reveal"
+          aria-label="Resumo financeiro de hoje"
+        >
+          <button onClick={() => onNavigate?.("finance")}>
+            <span>VENDAS CONFIRMADAS</span>
+            <strong>{String(todaySales.length).padStart(2, "0")}</strong>
+            <small>
+              {todaySales.length === 1 ? "pedido hoje" : "pedidos hoje"}
+            </small>
+          </button>
+          <button onClick={() => onNavigate?.("finance")}>
+            <span>TICKET MÉDIO</span>
+            <strong>
+              <LiveAmount value={ticket} currency={currency} paused={paused} />
+            </strong>
+            <small>por projeto</small>
+          </button>
+          <button onClick={() => onNavigate?.("finance")}>
+            <span title="Lucro em regime de caixa: recebimentos líquidos menos despesas pagas.">
+              LUCRO DE HOJE
+            </span>
+            <strong className={cashProfit < 0 ? "is-negative" : ""}>
+              <LiveAmount
+                value={cashProfit}
+                currency={currency}
+                paused={paused}
+              />
+            </strong>
+            <small>
+              {cashMargin === null
+                ? "Sem margem calculável"
+                : new Intl.NumberFormat("pt-BR", {
+                    maximumFractionDigits: 1,
+                  }).format(cashMargin) + "% de margem"}
+            </small>
+          </button>
+        </section>
+        <footer className="live-broadcast-footer">
+          <span>
+            <i />A tela acompanha automaticamente as novas vendas registradas
+            por <b>{state.profile.name}</b>
+          </span>
+        </footer>
+        <aside
+          className="live-utility-toolbar"
+          aria-label="Controles do Ao vivo"
+        >
           <div className="live-broadcast-controls">
             <div
               className="live-currency-switch"
@@ -342,181 +529,24 @@ export default function LivePage({
               <span>Adicionar venda</span>
             </button>
           </div>
-        </div>
-        <div className="live-broadcast-identity live-reveal">
-          <div className="live-brand-plaque">
-            <BrandMark size={40} />
-            <span>
-              THE GHOST<em>{"</>"}</em>
-            </span>
-            <i />
-            <i />
-          </div>
-          <span className="live-room-label">
-            SALA DE RECEITA <i /> {state.profile.name}
-          </span>
-          <h1>Vendas hoje</h1>
-          <p className="live-calendar-label">
-            <CalendarDays size={13} />
-            <span>{dateLabel}</span>
-            <i>·</i>
-            <time dateTime={clock.toISOString()}>{timeLabel}</time>
-            <b>{zoneLabel}</b>
-          </p>
-        </div>
-      </header>
-
-      <main className="live-broadcast-body">
-        <section
-          className="live-total-plaque live-reveal"
-          aria-labelledby="live-total-title"
-        >
-          <span className="live-edge-diamond is-left" aria-hidden="true" />
-          <span className="live-edge-diamond is-right" aria-hidden="true" />
-          <div className="live-total-topline">
-            <h2 id="live-total-title">FATURAMENTO CONFIRMADO</h2>
-            <span>
-              <i className={live ? "" : "is-offline"} />
-              THE GHOST · LIVE 01
-            </span>
-          </div>
-          <div className="live-total-value">
-            <span className="live-value-currency">{currencySymbol}</span>
-            <LiveAmount
-              value={todayRevenue}
-              currency={currency}
-              numeric
-              paused={paused}
-            />
-          </div>
-          <div className="live-total-bottomline">
-            <span className={!live ? "is-offline" : ""}>
-              <Radio size={12} />
-              {live ? "Atualização automática" : "Aguardando reconexão"}
-            </span>
-            {comparison === null ? (
-              <span className="live-no-comparison">
-                Sem histórico de ontem para comparar
-              </span>
-            ) : (
-              <span
-                className={
-                  "live-day-comparison " + (comparison < 0 ? "is-negative" : "")
-                }
-              >
-                <ChevronUp size={13} />
-                {comparison > 0 ? "+" : ""}
-                {new Intl.NumberFormat("pt-BR", {
-                  maximumFractionDigits: 1,
-                }).format(comparison)}
-                % em relação a ontem
-              </span>
-            )}
-          </div>
-          <div className="live-total-underlight" aria-hidden="true" />
-        </section>
-
-        <section
-          className="live-trend-section live-reveal"
-          aria-labelledby="live-trend-title"
-        >
-          <div className="live-trend-heading">
-            <div>
-              <span className="live-trend-eyebrow">DESEMPENHO POR HORÁRIO</span>
-              <h2 id="live-trend-title">Tendência de vendas</h2>
-              <p>Receita registrada ao longo do dia</p>
-            </div>
-            <div className="live-chart-legend">
-              <span>
-                <i />
-                Hoje
-              </span>
-              <span>
-                <i />
-                Ontem
-              </span>
-            </div>
-          </div>
-          <NeonChart
-            points={todaySeries.points}
-            comparisonPoints={yesterdaySeries.points}
-            seriesLabel="Hoje"
-            comparisonLabel="Ontem"
-            currency={currency}
-            paused={paused}
-            smooth
-            showPoints
-            empty={todaySales.length === 0 && yesterdaySales.length === 0}
-            emptyTitle="Sua próxima venda acende este painel."
-            emptyDescription="Adicione suas vendas para acompanhar a receita de cada horário."
-            ticks={[
-              { label: "00:00", position: 0 },
-              { label: "03:00", position: 0.125 },
-              { label: "06:00", position: 0.25 },
-              { label: "09:00", position: 0.375 },
-              { label: "12:00", position: 0.5 },
-              { label: "15:00", position: 0.625 },
-              { label: "18:00", position: 0.75 },
-              { label: "21:00", position: 0.875 },
-              { label: "24:00", position: 1 },
-            ]}
-            ariaLabel={
-              "Vendas reais por hora em " + currency + ", hoje e ontem"
-            }
-            className="live-large-chart"
-          />
-          <div className="live-chart-footnote">
-            <span>
-              Valores após descontos · {currency} · {timezone}
-            </span>
-            <span>Última atualização: {syncLabel}</span>
-          </div>
-          {todaySeries.carried + yesterdaySeries.carried > 0 && (
-            <p className="live-carried-note">
-              Vendas datadas de hoje ou ontem que foram registradas em outro dia
-              entram no horário de abertura, às 00:00.
-            </p>
-          )}
-        </section>
-
-        <section
-          className="live-broadcast-summary live-reveal"
-          aria-label="Resumo financeiro de hoje"
-        >
-          <button onClick={() => onNavigate?.("finance")}>
-            <span>VENDAS CONFIRMADAS</span>
-            <strong>
-              {todaySales.length}
-              <small>{todaySales.length === 1 ? "venda" : "vendas"}</small>
-            </strong>
-          </button>
-          <button onClick={() => onNavigate?.("finance")}>
-            <span>TICKET MÉDIO</span>
-            <strong>
-              <LiveAmount value={ticket} currency={currency} paused={paused} />
-            </strong>
-          </button>
-          <button onClick={() => onNavigate?.("finance")}>
-            <span>RESULTADO DO DIA</span>
-            <strong
-              className={receivedToday - expensesToday < 0 ? "is-negative" : ""}
-            >
-              <LiveAmount
-                value={receivedToday - expensesToday}
-                currency={currency}
-                paused={paused}
-              />
-            </strong>
-            <small>Recebimentos líquidos menos despesas pagas</small>
-          </button>
-        </section>
-        <footer className="live-broadcast-footer">
+        </aside>
+        <div className="live-chart-footnote">
           <span>
-            <i />A tela acompanha automaticamente as novas vendas registradas
-            por {state.profile.name}.
+            Valores após descontos · {currency} · {timezone}
           </span>
-          <span>THE GHOST {"</>"}</span>
-        </footer>
+          <span>Última atualização: {syncLabel}</span>
+        </div>
+        {todaySeries.carried + yesterdaySeries.carried > 0 && (
+          <p className="live-carried-note">
+            Vendas datadas de hoje ou ontem que foram registradas em outro dia
+            entram no horário de abertura, às 00:00.
+          </p>
+        )}
+        <p className="live-accounting-note">
+          Lucro em regime de caixa: recebimentos líquidos menos despesas pagas.
+          A margem usa esses recebimentos; vendas a prazo entram nesse indicador
+          quando recebidas.
+        </p>
       </main>
     </div>
   );

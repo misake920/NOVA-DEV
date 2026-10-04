@@ -30,10 +30,10 @@ interface NeonChartProps {
 }
 
 const LEFT = 65,
-  RIGHT = 1080,
-  TOP = 36,
-  BASE = 310,
-  HEIGHT = 355;
+  RIGHT = 1098,
+  TOP = 14,
+  BASE = 220,
+  HEIGHT = 270;
 
 export default function NeonChart({
   points,
@@ -178,7 +178,8 @@ export default function NeonChart({
   };
   const axisMoney = (value: number) =>
     new Intl.NumberFormat("pt-BR", {
-      notation: "compact",
+      notation: Math.abs(value) >= 1000000 ? "compact" : "standard",
+      minimumFractionDigits: 0,
       maximumFractionDigits: 1,
       style: "currency",
       currency,
@@ -230,35 +231,35 @@ export default function NeonChart({
         <defs>
           <linearGradient
             id={`neon-area-${unique}`}
+            gradientUnits="userSpaceOnUse"
             x1="0"
             x2="0"
-            y1="0"
-            y2="1"
-          >
-            <stop offset="0" stopColor="#ff153e" stopOpacity=".55" />
-            <stop offset=".55" stopColor="#ff003c" stopOpacity=".15" />
-            <stop offset="1" stopColor="#ff003c" stopOpacity="0" />
-          </linearGradient>
-          <linearGradient
-            id={`neon-stroke-${unique}`}
-            gradientUnits="userSpaceOnUse"
-            x1={LEFT}
-            x2={RIGHT}
-            y1={BASE}
+            y1={TOP}
             y2={BASE}
           >
-            <stop offset="0" stopColor="#c90031" />
-            <stop offset=".43" stopColor="#ff003c" />
-            <stop offset="1" stopColor="#ff8c76" />
+            <stop offset="0" stopColor="#ff254e" stopOpacity=".34" />
+            <stop offset=".6" stopColor="#ff254e" stopOpacity=".085" />
+            <stop offset="1" stopColor="#ff254e" stopOpacity="0" />
           </linearGradient>
           <filter
             id={`neon-blur-${unique}`}
-            x="-50%"
-            y="-120%"
-            width="200%"
-            height="340%"
+            filterUnits="userSpaceOnUse"
+            x={LEFT - 20}
+            y={TOP - 20}
+            width={RIGHT - LEFT + 40}
+            height={BASE - TOP + 40}
           >
-            <feGaussianBlur stdDeviation="5" />
+            <feGaussianBlur stdDeviation="3.5" />
+          </filter>
+          <filter
+            id={`neon-soft-${unique}`}
+            filterUnits="userSpaceOnUse"
+            x={LEFT - 12}
+            y={TOP - 12}
+            width={RIGHT - LEFT + 24}
+            height={BASE - TOP + 24}
+          >
+            <feGaussianBlur stdDeviation="1.2" />
           </filter>
           <linearGradient
             id={`neon-grid-${unique}`}
@@ -267,8 +268,8 @@ export default function NeonChart({
             y1="1"
             y2="0"
           >
-            <stop offset="0" stopColor="#ff003c" stopOpacity=".045" />
-            <stop offset="1" stopColor="#ff003c" stopOpacity="0" />
+            <stop offset="0" stopColor="#ff254e" stopOpacity=".015" />
+            <stop offset="1" stopColor="#ff254e" stopOpacity="0" />
           </linearGradient>
         </defs>
         <rect
@@ -288,8 +289,8 @@ export default function NeonChart({
               y1={y}
               y2={y}
               stroke="#ffffff"
-              strokeOpacity={ratio === 0 ? ".10" : ".055"}
-              strokeDasharray={ratio === 0 ? "0" : "3 7"}
+              strokeOpacity={ratio === 0 ? ".16" : ".065"}
+              strokeDasharray={ratio === 0 ? "0" : "2 5"}
             />
           );
         })}
@@ -298,19 +299,18 @@ export default function NeonChart({
             key={tick.label}
             x1={LEFT + tick.position * (RIGHT - LEFT)}
             x2={LEFT + tick.position * (RIGHT - LEFT)}
-            y1={TOP}
-            y2={BASE}
+            y1={BASE}
+            y2={BASE + 5}
             stroke="#ffffff"
-            strokeOpacity=".04"
-            strokeDasharray="3 8"
+            strokeOpacity=".08"
           />
         ))}
         {geometry.comparisonLine && (
           <path
             d={geometry.comparisonLine}
             fill="none"
-            stroke="#c6d4e5"
-            strokeOpacity=".53"
+            stroke="#dce4f5"
+            strokeOpacity=".94"
             strokeWidth="2"
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -329,18 +329,27 @@ export default function NeonChart({
             <path
               d={geometry.line}
               fill="none"
-              stroke="#ff003c"
-              strokeWidth="9"
-              strokeOpacity=".65"
+              stroke="#ff254e"
+              strokeWidth="8"
+              strokeOpacity=".34"
               filter={`url(#neon-blur-${unique})`}
+              vectorEffect="non-scaling-stroke"
+            />
+            <path
+              d={geometry.line}
+              fill="none"
+              stroke="#ff5271"
+              strokeWidth="4.5"
+              strokeOpacity=".6"
+              filter={`url(#neon-soft-${unique})`}
               vectorEffect="non-scaling-stroke"
             />
             <path
               className="neon-chart-stroke"
               d={geometry.line}
               fill="none"
-              stroke={`url(#neon-stroke-${unique})`}
-              strokeWidth="3"
+              stroke="#ff5271"
+              strokeWidth="2.8"
               strokeLinejoin="round"
               strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
@@ -360,7 +369,7 @@ export default function NeonChart({
               vectorEffect="non-scaling-stroke"
             />
           ))}
-        {geometry.last && (
+        {showPoints && geometry.last && (
           <g>
             <circle
               cx={geometry.last.x}
@@ -422,7 +431,9 @@ export default function NeonChart({
             >
               {geometry.max === geometry.min && ratio === 0
                 ? "0"
-                : axisMoney(geometry.min + geometry.span * ratio)}
+                : geometry.min + geometry.span * ratio === 0
+                  ? "0"
+                  : axisMoney(geometry.min + geometry.span * ratio)}
             </span>
           ))}
         {(ticks || defaultTicks).map((tick) => (
@@ -444,23 +455,17 @@ export default function NeonChart({
           </span>
         ))}
       </div>
-      {empty && (
+      {empty && (emptyTitle || emptyDescription) && (
         <div className="neon-chart-empty">
-          <span className="neon-chart-empty-signal" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-            <i />
-          </span>
-          <strong>{emptyTitle}</strong>
-          <p>{emptyDescription}</p>
+          {emptyTitle && <strong>{emptyTitle}</strong>}
+          {emptyDescription && <p>{emptyDescription}</p>}
         </div>
       )}
       {point && (
         <div
           className="neon-chart-tooltip"
           style={{
-            left: `${Math.max(13, Math.min(87, (point.x / 1100) * 100))}%`,
+            left: `clamp(118px, ${(point.x / 1100) * 100}%, calc(100% - 118px))`,
             top: `${Math.max(7, Math.min(65, (point.y / HEIGHT) * 100 - 20))}%`,
           }}
           role="status"

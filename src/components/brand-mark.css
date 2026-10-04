@@ -1,0 +1,18 @@
+.ghost-brand-mark {
+  display: block;
+  flex: 0 0 auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 7px rgb(255 21 54 / 18%));
+  transition: filter 220ms ease;
+}
+
+.brand:hover .ghost-brand-mark,
+a:hover .ghost-brand-mark {
+  filter: drop-shadow(0 0 10px rgb(255 21 54 / 45%));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghost-brand-mark {
+    transition: none;
+  }
+}

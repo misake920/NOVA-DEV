@@ -1,0 +1,161 @@
+.neon-chart {
+  position: relative;
+  width: 100%;
+  height: 330px;
+  outline-offset: 6px;
+  isolation: isolate;
+  min-width: 0;
+}
+.neon-chart > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.neon-chart-axis {
+  fill: #75747b;
+  font:
+    10px Inter,
+    sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.neon-chart-empty {
+  position: absolute;
+  top: 33%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  width: min(88%, 370px);
+  text-align: center;
+  pointer-events: none;
+}
+.neon-chart-empty strong {
+  font:
+    500 17px "Space Grotesk",
+    sans-serif;
+  color: #ddd9dc;
+  letter-spacing: -0.3px;
+}
+.neon-chart-empty p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #88838a;
+  margin: 0;
+}
+.neon-chart-empty-signal {
+  display: flex;
+  height: 26px;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+.neon-chart-empty-signal i {
+  width: 3px;
+  height: 12px;
+  background: #ff2146;
+  border-radius: 2px;
+  box-shadow: 0 0 9px #ff003c88;
+}
+.neon-chart-empty-signal i:nth-child(2) {
+  height: 24px;
+}
+.neon-chart-empty-signal i:nth-child(3) {
+  height: 18px;
+}
+.neon-chart-empty-signal i:nth-child(4) {
+  height: 8px;
+}
+.neon-chart-tooltip {
+  position: absolute;
+  transform: translateX(-50%);
+  background: #130b0eea;
+  backdrop-filter: blur(12px);
+  border: 1px solid #ff003c55;
+  border-radius: 10px;
+  box-shadow:
+    0 8px 35px #0008,
+    0 0 25px #ff003c13;
+  padding: 11px 16px;
+  display: grid;
+  gap: 5px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+}
+.neon-chart-tooltip > span {
+  font-size: 10px;
+  color: #a98f96;
+}
+.neon-chart-tooltip > strong {
+  font:
+    500 16px "Space Grotesk",
+    sans-serif;
+  color: #fff2ef;
+  letter-spacing: -0.4px;
+}
+@media (max-width: 600px) {
+  .neon-chart {
+    height: 235px;
+  }
+  .neon-chart-axis {
+    font-size: 22px;
+  }
+  .neon-chart-empty {
+    top: 29%;
+    gap: 8px;
+    width: 74%;
+  }
+  .neon-chart-empty strong {
+    font-size: 14px;
+  }
+  .neon-chart-empty p {
+    font-size: 11px;
+  }
+  .neon-chart-tooltip {
+    padding: 8px 11px;
+  }
+  .neon-chart-tooltip > strong {
+    font-size: 13px;
+  }
+  .neon-chart-tooltip > span {
+    font-size: 9px;
+  }
+}
+
+.neon-chart-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font:
+    9px Inter,
+    sans-serif;
+  color: #75747b;
+  font-variant-numeric: tabular-nums;
+}
+.neon-chart-labels > span {
+  position: absolute;
+  white-space: nowrap;
+}
+.neon-chart-y-label {
+  transform: translate(-100%, -50%);
+}
+.neon-chart-x-label {
+  bottom: 2.8%;
+  transform: translateX(-50%);
+}
+.neon-chart-x-label.is-first {
+  transform: none;
+}
+.neon-chart-x-label.is-last {
+  transform: translateX(-100%);
+}
+@media (max-width: 600px) {
+  .neon-chart-labels {
+    font-size: 8px;
+  }
+  .neon-chart-y-label {
+    font-size: 7px;
+  }
+}

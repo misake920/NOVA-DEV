@@ -24,6 +24,7 @@ npm start
 
 - Acesso pessoal direto, sem cadastro ou senha no aplicativo; proteção da implantação pela Vercel e perfil persistente.
 - Dashboard com saudação por fuso, relógio, indicadores financeiros, gráficos, funil, metas, tarefas e atividade real.
+- Página Ao vivo em tela inteira: receita de hoje, tendência por horário, comparação com ontem, indicadores reais, seleção de moeda e atalho para adicionar vendas.
 - Atualização entre sessões por consulta ao servidor a cada cinco segundos, com status e última atualização.
 - Clientes, contatos, etiquetas, notas, histórico, revisão de duplicatas, propostas e tarefas.
 - Funil com etapas configuráveis, arraste e alternativa por seletor, motivo de perda e venda vinculada após confirmação.
@@ -33,8 +34,8 @@ npm start
 - Prospecção Places em Brasil, Espanha, Itália, Estados Unidos e Holanda; filtros salvos e qualificação explicável.
 - Abordagens em cinco idiomas, modelos locais ou IA opcional, revisão, edição, cópia e histórico manual do contato.
 - Biblioteca de objeções, metas, agenda, busca global e notificações reais.
-- Globo Three.js com geografia real, câmera por país, materiais grafite, contornos neon, atmosfera, navegação e fallback.
-- GSAP, partículas, pausa, movimento reduzido e telas adaptadas ao celular.
+- Globo Three.js com texturas terrestres reais, relevo, nuvens, iluminação neon, câmera por país, navegação e fallback.
+- Marca própria, gráficos com degradê, cursor com luz vermelha, GSAP, partículas, pausa, movimento reduzido e telas adaptadas ao celular.
 
 A fonte não informar um site não confirma a ausência de site. A interface distingue os estados e permite registrar verificação manual. Abrir WhatsApp/e-mail não confirma envio de mensagem. Os modelos locais traduzem a estrutura; campos livres permanecem como escritos, com revisão ou IA opcional para tradução completa.
 
@@ -56,6 +57,6 @@ A suíte de navegador cobre o modo legado de contas e inicia e encerra seu servi
 
 ## Stack e assets
 
-React, TypeScript, Vite, Express, Three.js, GSAP e Lucide. SQLite local e Supabase na publicação; adaptador pg legado disponível. Fontes Inter e Space Grotesk com licença OFL. Geometria world-atlas/Natural Earth em domínio público. Sem imagens externas necessárias.
+React, TypeScript, Vite, Express, Three.js, GSAP e Lucide. SQLite local e Supabase na publicação; adaptador pg legado disponível. Fontes Inter e Space Grotesk com licença OFL. Geometria world-atlas/Natural Earth em domínio público. Texturas locais Solar System Scope/INOVE, CC BY 4.0, com [origem e créditos](public/textures/README.md).
 
 Skill instalada: [.agents/skills/atommic/SKILL.md](.agents/skills/atommic/SKILL.md).

@@ -85,6 +85,7 @@ type RefundForm = {
 export interface FinancePageProps {
   intent?: { opportunityId?: string; saleId?: string } | null;
   onIntentHandled?: () => void;
+  onCreateCustomer?: () => void;
 }
 const currencies: Currency[] = ["BRL", "EUR", "USD"];
 const paymentMethods = [
@@ -134,7 +135,10 @@ function refundAmount(state: Workspace, receiptId: string) {
     .reduce((total, item) => total + item.amountMinor, 0);
 }
 function nextDueDate(state: Workspace, sale: Sale) {
-  return installmentBalances(state,sale).find(part => part.balance > 0)?.dueDate || "";
+  return (
+    installmentBalances(state, sale).find((part) => part.balance > 0)
+      ?.dueDate || ""
+  );
 }
 function csvCell(value: string | number) {
   const raw = String(value);
@@ -157,6 +161,7 @@ function saveCsv(name: string, rows: (string | number)[][]) {
 export default function FinancePage({
   intent,
   onIntentHandled,
+  onCreateCustomer,
 }: FinancePageProps) {
   const { state, command, live, lastSync } = useWorkspace();
   const toast = useToast();
@@ -338,6 +343,9 @@ export default function FinancePage({
           ],
         });
       }
+      setTab("sales");
+    } else {
+      openSale();
       setTab("sales");
     }
     handledIntent.current = key;
@@ -837,7 +845,7 @@ export default function FinancePage({
               onClick={() => openSale()}
             >
               <Plus size={16} />
-              Nova venda
+              Adicionar venda
             </button>
           </div>
         }
@@ -1427,6 +1435,18 @@ export default function FinancePage({
             {state.customers.length === 0 && (
               <p className="finance-information">
                 Cadastre um cliente na área Clientes antes de registrar a venda.
+                {onCreateCustomer && (
+                  <button
+                    type="button"
+                    className="text-button finance-customer-shortcut"
+                    onClick={() => {
+                      closeForms();
+                      onCreateCustomer();
+                    }}
+                  >
+                    Cadastrar meu primeiro cliente <ArrowUpRight size={14} />
+                  </button>
+                )}
               </p>
             )}
             {financialLocked && (

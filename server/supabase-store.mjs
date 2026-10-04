@@ -1,7 +1,9 @@
 import { StoreError } from './store.mjs';
 
 const unavailable = () => new StoreError(503, 'DATABASE_UNAVAILABLE', 'O armazenamento está indisponível. Tente novamente mais tarde.');
-const configurationMissing = () => new StoreError(503, 'DATABASE_NOT_CONFIGURED', 'Configure SUPABASE_URL e SUPABASE_SECRET_KEY ou SUPABASE_SERVICE_ROLE_KEY no servidor.');
+const configurationError = (code, message) => new StoreError(503, code, message);
+const authenticationFailed = () => configurationError('DATABASE_AUTH_FAILED', 'O Supabase recusou a credencial do servidor. Verifique se SUPABASE_SECRET_KEY ou SUPABASE_SERVICE_ROLE_KEY pertence ao mesmo projeto de SUPABASE_URL.');
+const accessDenied = () => configurationError('DATABASE_ACCESS_DENIED', 'A credencial do servidor não tem permissão para acessar o Supabase. Verifique a chave secreta ou service_role e as permissões do banco.');
 const schemaMissing = () => new StoreError(503, 'DATABASE_SCHEMA_MISSING', 'Prepare o projeto Supabase executando supabase/schema.sql no SQL Editor.');
 const workspaceMissing = () => new StoreError(404, 'WORKSPACE_NOT_FOUND', 'A conta não foi encontrada.');
 
@@ -107,21 +109,38 @@ export class SupabaseStore {
   configure() {
     const rawUrl = this.env.SUPABASE_URL;
     const rawKey = this.env.SUPABASE_SECRET_KEY || this.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (typeof rawUrl !== 'string' || typeof rawKey !== 'string' || !rawKey.trim() || typeof this.fetchImpl !== 'function') throw configurationMissing();
+    if (typeof rawUrl !== 'string' || !rawUrl.trim()) {
+      throw configurationError('DATABASE_URL_MISSING', 'SUPABASE_URL não está configurada no servidor.');
+    }
+    if (typeof rawKey !== 'string' || !rawKey.trim()) {
+      throw configurationError('DATABASE_KEY_MISSING', 'SUPABASE_SECRET_KEY ou SUPABASE_SERVICE_ROLE_KEY não está configurada no servidor.');
+    }
+    if (typeof this.fetchImpl !== 'function') throw unavailable();
     let url;
-    try { url = new URL(rawUrl.trim()); } catch { throw configurationMissing(); }
+    try { url = new URL(rawUrl.trim()); }
+    catch { throw configurationError('DATABASE_URL_INVALID', 'SUPABASE_URL é inválida. Use a URL HTTPS do projeto Supabase, sem caminho, parâmetros ou credenciais.'); }
     const loopback = url.hostname === 'localhost' || url.hostname === '[::1]' || /^127(?:\.\d{1,3}){3}$/.test(url.hostname);
     if ((url.protocol !== 'https:' && !(loopback && url.protocol === 'http:')) || url.username || url.password || url.search || url.hash ||
-        (url.pathname !== '/' && url.pathname !== '')) throw configurationMissing();
+        (url.pathname !== '/' && url.pathname !== '')) {
+      throw configurationError('DATABASE_URL_INVALID', 'SUPABASE_URL é inválida. Use a URL HTTPS do projeto Supabase, sem caminho, parâmetros ou credenciais.');
+    }
     const key = rawKey.trim();
-    if (/[\r\n]/.test(key) || key.startsWith('sb_publishable_')) throw configurationMissing();
+    if (/[\r\n]/.test(key)) {
+      throw configurationError('DATABASE_KEY_MULTILINE', 'A chave Supabase contém uma quebra de linha. Configure a credencial do servidor em uma única linha.');
+    }
+    if (key.startsWith('sb_publishable_')) {
+      throw configurationError('DATABASE_KEY_PUBLISHABLE', 'Uma chave publishable não pode ser usada no servidor. Use SUPABASE_SECRET_KEY ou uma chave service_role em SUPABASE_SERVICE_ROLE_KEY.');
+    }
     // A legacy anon/authenticated JWT is not a server credential. Proxy-backed
     // secret bindings need not expose a JWT locally, so accept non-JWT keys.
     if (key.split('.').length === 3) {
+      let claims;
       try {
-        const claims = JSON.parse(Buffer.from(key.split('.')[1], 'base64url').toString('utf8'));
-        if (claims.role !== 'service_role') throw configurationMissing();
-      } catch { throw configurationMissing(); }
+        claims = JSON.parse(Buffer.from(key.split('.')[1], 'base64url').toString('utf8'));
+      } catch { throw configurationError('DATABASE_KEY_INVALID', 'A chave JWT do Supabase é inválida. Configure uma chave secreta ou service_role válida no servidor.'); }
+      if (claims?.role !== 'service_role') {
+        throw configurationError('DATABASE_KEY_NOT_SERVICE_ROLE', 'A chave JWT configurada não é service_role. Chaves anon e authenticated não podem ser usadas como credencial do servidor.');
+      }
     }
     this.baseUrl = `${url.origin}/rest/v1/`;
     this.headers = { apikey: key, 'Content-Type': 'application/json', Accept: 'application/json' };
@@ -162,10 +181,12 @@ export class SupabaseStore {
         method, headers: { ...this.headers, ...(prefer ? { Prefer: prefer } : {}) }, redirect: 'error',
         signal: AbortSignal.timeout(10_000), ...(body === undefined ? {} : { body: JSON.stringify(body) }),
       });
-      if (response.status === 204 || (response.ok && prefer === 'return=minimal')) result = null;
+      if (response.status === 401 || response.status === 403 || response.status === 204 || (response.ok && prefer === 'return=minimal')) result = null;
       else result = await response.json();
     } catch { throw unavailable(); }
     if (!response.ok) {
+      if (response.status === 401) throw authenticationFailed();
+      if (response.status === 403) throw accessDenied();
       if (['PGRST202', 'PGRST205', '42P01', '42883'].includes(result?.code)) throw schemaMissing();
       if (result?.code === '23503') throw workspaceMissing();
       // Provider messages may contain hostnames, SQL or secrets. Use only

@@ -23,12 +23,7 @@
   inset: 4% 8% 8%;
   z-index: 0;
   border-radius: 50%;
-  background: radial-gradient(
-    ellipse at 67% 52%,
-    #ff00382d 0%,
-    #f6003012 31%,
-    transparent 68%
-  );
+  background: #000;
   filter: blur(13px);
   pointer-events: none;
 }
@@ -42,7 +37,7 @@
   z-index: 0;
   border-radius: 50%;
   border: 1px solid #ff2c4426;
-  background: radial-gradient(ellipse, #ff143719, transparent 70%);
+  background: #000;
   box-shadow:
     0 0 27px #ff123515,
     inset 0 0 16px #ff12350c;
@@ -61,27 +56,27 @@
   font-size: 8px;
   line-height: 1.75;
   letter-spacing: 1.5px;
-  color: #eee1e5;
+  color: #f5f5f5;
   pointer-events: none;
 }
 
 .globe-hud b {
   font-size: 7px;
   font-weight: 500;
-  color: #806c72;
+  color: #757575;
   letter-spacing: 1.2px;
 }
 .globe-hud-line {
   width: 2px;
   height: 24px;
-  background: linear-gradient(#ff143b, transparent);
+  background: #ff0024;
   box-shadow: 0 0 11px #ff123570;
 }
 .globe-hud-cross {
   margin-left: auto;
   font-size: 19px;
   font-weight: 300;
-  color: #ff294d;
+  color: #ff0024;
 }
 .globe-texture-credit {
   position: absolute;
@@ -92,14 +87,14 @@
   gap: 5px;
   font-size: 6px;
   line-height: 1.5;
-  color: #74606a;
+  color: #6a6a6a;
 }
 .globe-texture-credit a {
   color: inherit;
   text-decoration: none;
 }
 .globe-texture-credit a:hover {
-  color: #ddc0ca;
+  color: #f5f5f5;
   text-decoration: underline;
 }
 .globe-compact .globe-texture-credit {
@@ -121,7 +116,7 @@
   font-size: 7px;
   text-transform: uppercase;
   letter-spacing: 1.15px;
-  color: #927d85;
+  color: #878787;
 }
 
 .globe-market-selectable {
@@ -129,7 +124,7 @@
 }
 .globe-market-label b {
   display: block;
-  color: #ff5872;
+  color: #ff0024;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 1px;
@@ -138,7 +133,7 @@
 .globe-market-dot {
   width: 5px;
   height: 5px;
-  background: #ff2047;
+  background: #ff0024;
   border-radius: 50%;
   box-shadow:
     0 0 12px #ff0038,
@@ -146,7 +141,7 @@
 }
 .globe-coordinate {
   margin-left: auto;
-  color: #a08791;
+  color: #939393;
   font-size: 8px;
   font-variant-numeric: tabular-nums;
   line-height: 1.7;
@@ -169,9 +164,9 @@
   min-height: 44px;
   padding: 5px 8px;
   border: 1px solid #ffffff14;
-  border-radius: 9px;
-  color: #a4989e;
-  background: #0a080be8;
+  border-radius: 2px;
+  color: #9e9e9e;
+  background: #000;
   backdrop-filter: blur(9px);
   font-size: 10px;
   font-weight: 600;
@@ -183,26 +178,26 @@
 }
 
 .globe-market-controls button:hover {
-  border-color: #ff2b5070;
+  border-color: #ff002470;
   color: #fff;
-  background: #30111b;
+  background: #000;
 }
 .globe-market-controls button[aria-pressed="true"] {
   color: #fff;
-  border-color: #ff214480;
-  background: linear-gradient(155deg, #7b102ddd, #290b14e6);
+  border-color: #ff002480;
+  background: #000;
   box-shadow:
-    inset 0 1px #ff6e9030,
-    0 0 18px #ff003817;
+    inset 0 -3px #ff0024,
+    0 0 18px #ff002433;
 }
 .globe-market-controls button:focus-visible {
-  outline: 2px solid #ff7190;
+  outline: 2px solid #ff0024;
   outline-offset: 3px;
 }
 .globe-drag-hint {
   margin-left: auto;
   max-width: 80px;
-  color: #83717b;
+  color: #7a7a7a;
   font-size: 8px;
   line-height: 1.6;
   text-align: right;
@@ -244,7 +239,7 @@
     min-width: 37px;
     max-width: 51px;
     min-height: 44px;
-    border-radius: 8px;
+    border-radius: 2px;
   }
   .globe-drag-hint {
     margin-left: auto;

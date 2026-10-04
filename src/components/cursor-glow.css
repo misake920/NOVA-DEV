@@ -23,9 +23,9 @@
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgb(255 0 43 / 9%) 0%,
-    rgb(255 7 44 / 5%) 20%,
-    rgb(246 0 32 / 2%) 40%,
+    rgb(255 0 36 / 15%) 0%,
+    rgb(255 0 36 / 8%) 20%,
+    rgb(255 0 36 / 3%) 40%,
     transparent 68%
   );
   will-change: transform;
@@ -52,11 +52,11 @@
 .ghost-cursor-ring {
   width: 24px;
   height: 24px;
-  border: 1px solid rgb(255 36 63 / 55%);
+  border: 1px solid rgb(255 0 36 / 90%);
   border-radius: 50%;
   box-shadow:
-    0 0 13px rgb(255 5 42 / 21%),
-    inset 0 0 8px rgb(255 5 42 / 10%);
+    0 0 18px rgb(255 0 36 / 50%),
+    inset 0 0 8px rgb(255 0 36 / 22%);
   transition:
     width 180ms ease,
     height 180ms ease,
@@ -68,14 +68,14 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #ffaf9a;
+  background: #fff;
   box-shadow:
-    0 0 5px #ff183c,
-    0 0 12px #ff0035;
+    0 0 6px #ff0024,
+    0 0 16px #ff0024;
 }
 
 .ghost-cursor-cross {
-  background: rgb(255 34 61 / 65%);
+  background: rgb(255 0 36 / 85%);
   transition: opacity 180ms ease;
 }
 .ghost-cursor-cross-x {
@@ -89,8 +89,8 @@
 .ghost-cursor-glow[data-interactive="true"] .ghost-cursor-ring {
   width: 36px;
   height: 36px;
-  border-color: rgb(255 77 90 / 85%);
-  background: rgb(255 0 38 / 5%);
+  border-color: #ff0024;
+  background: rgb(255 0 36 / 8%);
 }
 .ghost-cursor-glow[data-interactive="true"] .ghost-cursor-cross {
   opacity: 0.25;

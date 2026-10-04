@@ -29,9 +29,9 @@ export default function BrandMark({
           y2="58"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#ff735b" />
-          <stop offset=".38" stopColor="#ff173f" />
-          <stop offset="1" stopColor="#d90031" />
+          <stop stopColor="#ff0024" />
+          <stop offset=".38" stopColor="#ff0024" />
+          <stop offset="1" stopColor="#c00016" />
         </linearGradient>
         <linearGradient
           id={`${id}-hood`}
@@ -41,8 +41,8 @@ export default function BrandMark({
           y2="54"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#491018" />
-          <stop offset="1" stopColor="#11080b" />
+          <stop stopColor="#000000" />
+          <stop offset="1" stopColor="#000000" />
         </linearGradient>
         <radialGradient
           id={`${id}-glass`}
@@ -52,14 +52,14 @@ export default function BrandMark({
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(24 12) rotate(57) scale(53)"
         >
-          <stop stopColor="#ff2547" stopOpacity=".17" />
-          <stop offset="1" stopColor="#ff2547" stopOpacity="0" />
+          <stop stopColor="#ff0024" stopOpacity=".17" />
+          <stop offset="1" stopColor="#ff0024" stopOpacity="0" />
         </radialGradient>
       </defs>
       <path
         d="M14 3h36l11 11v36L50 61H14L3 50V14L14 3Z"
-        fill="#10090c"
-        stroke="#ff2744"
+        fill="#000000"
+        stroke="#ff0024"
         strokeOpacity=".26"
       />
       <path
@@ -80,17 +80,17 @@ export default function BrandMark({
         strokeWidth="2.4"
         strokeLinejoin="round"
       />
-      <path d="m23 28 7 2-2 6-5-2v-6Zm18 0-7 2 2 6 5-2v-6Z" fill="#ff304c" />
-      <path d="m24 28 6 2M40 28l-6 2" stroke="#ffb5a1" strokeWidth="1.1" />
+      <path d="m23 28 7 2-2 6-5-2v-6Zm18 0-7 2 2 6 5-2v-6Z" fill="#ff0024" />
+      <path d="m24 28 6 2M40 28l-6 2" stroke="#ffffff" strokeWidth="1.1" />
       <path
         d="m32 16 8 6M20 44v3M44 44v3"
-        stroke="#ff725b"
+        stroke="#ff0024"
         strokeOpacity=".6"
         strokeWidth="1"
       />
       <path
         d="M17 3H9M61 42v9l-7 7"
-        stroke="#ff3e52"
+        stroke="#ff0024"
         strokeOpacity=".52"
         strokeWidth="1"
       />

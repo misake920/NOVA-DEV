@@ -1,10 +1,11 @@
 .neon-chart {
   position: relative;
   width: 100%;
-  height: 330px;
-  outline-offset: 6px;
-  isolation: isolate;
+  height: 340px;
   min-width: 0;
+  background: #000;
+  outline-offset: 7px;
+  isolation: isolate;
 }
 .neon-chart > svg {
   display: block;
@@ -12,126 +13,96 @@
   height: 100%;
   overflow: visible;
 }
+.neon-chart:focus-visible {
+  outline: 2px solid #ff001e;
+}
 .neon-chart-axis {
-  fill: #75747b;
-  font:
-    10px Inter,
-    sans-serif;
+  fill: #999;
+  font: 500 10px var(--font-ui, monospace);
   font-variant-numeric: tabular-nums;
 }
 .neon-chart-empty {
   position: absolute;
-  top: 33%;
+  top: 29%;
   left: 50%;
   transform: translateX(-50%);
   display: grid;
   justify-items: center;
-  gap: 10px;
-  width: min(88%, 370px);
+  gap: 11px;
+  width: min(86%, 400px);
   text-align: center;
   pointer-events: none;
 }
 .neon-chart-empty strong {
-  font:
-    500 17px "Space Grotesk",
-    sans-serif;
-  color: #ddd9dc;
-  letter-spacing: -0.3px;
+  font: 400 25px/1.2 var(--font-display, sans-serif);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: #fff;
 }
 .neon-chart-empty p {
-  font-size: 12px;
-  line-height: 1.7;
-  color: #88838a;
+  font: 400 11px/1.8 var(--font-ui, monospace);
+  color: #999;
   margin: 0;
 }
 .neon-chart-empty-signal {
   display: flex;
-  height: 26px;
+  height: 29px;
   align-items: center;
-  gap: 4px;
-  margin-bottom: 2px;
+  gap: 5px;
+  margin-bottom: 3px;
 }
 .neon-chart-empty-signal i {
-  width: 3px;
+  width: 4px;
   height: 12px;
-  background: #ff2146;
-  border-radius: 2px;
-  box-shadow: 0 0 9px #ff003c88;
+  background: #ff001e;
+  border-radius: 0;
+  box-shadow:
+    0 0 6px #ff001e,
+    0 0 22px #ff001e99;
 }
 .neon-chart-empty-signal i:nth-child(2) {
-  height: 24px;
+  height: 27px;
 }
 .neon-chart-empty-signal i:nth-child(3) {
-  height: 18px;
+  height: 20px;
 }
 .neon-chart-empty-signal i:nth-child(4) {
-  height: 8px;
+  height: 9px;
 }
 .neon-chart-tooltip {
   position: absolute;
   transform: translateX(-50%);
-  background: #130b0eea;
-  backdrop-filter: blur(12px);
-  border: 1px solid #ff003c55;
-  border-radius: 10px;
-  box-shadow:
-    0 8px 35px #0008,
-    0 0 25px #ff003c13;
+  background: #000;
+  border: 1px solid #ff001e;
+  border-left-width: 4px;
+  border-radius: 0;
+  box-shadow: 0 0 21px #ff001e35;
   padding: 11px 16px;
   display: grid;
-  gap: 5px;
+  gap: 6px;
   white-space: nowrap;
   pointer-events: none;
   z-index: 2;
 }
 .neon-chart-tooltip > span {
-  font-size: 10px;
-  color: #a98f96;
+  font: 500 10px/1.4 var(--font-ui, monospace);
+  color: #aaa;
 }
 .neon-chart-tooltip > strong {
-  font:
-    500 16px "Space Grotesk",
-    sans-serif;
-  color: #fff2ef;
-  letter-spacing: -0.4px;
+  font: 400 23px/1.1 var(--font-display, sans-serif);
+  color: #fff;
+  letter-spacing: 0.3px;
 }
-@media (max-width: 600px) {
-  .neon-chart {
-    height: 235px;
-  }
-  .neon-chart-axis {
-    font-size: 22px;
-  }
-  .neon-chart-empty {
-    top: 29%;
-    gap: 8px;
-    width: 74%;
-  }
-  .neon-chart-empty strong {
-    font-size: 14px;
-  }
-  .neon-chart-empty p {
-    font-size: 11px;
-  }
-  .neon-chart-tooltip {
-    padding: 8px 11px;
-  }
-  .neon-chart-tooltip > strong {
-    font-size: 13px;
-  }
-  .neon-chart-tooltip > span {
-    font-size: 9px;
-  }
+.neon-chart-tooltip > small {
+  font: 400 10px/1.5 var(--font-ui, monospace);
+  color: #aaa;
 }
-
 .neon-chart-labels {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  font:
-    9px Inter,
-    sans-serif;
-  color: #75747b;
+  font: 500 10px var(--font-ui, monospace);
+  color: #999;
   font-variant-numeric: tabular-nums;
 }
 .neon-chart-labels > span {
@@ -152,10 +123,42 @@
   transform: translateX(-100%);
 }
 @media (max-width: 600px) {
-  .neon-chart-labels {
+  .neon-chart {
+    height: 260px;
+  }
+  .neon-chart-axis {
+    font-size: 22px;
+  }
+  .neon-chart-empty {
+    top: 28%;
+    gap: 9px;
+    width: 76%;
+  }
+  .neon-chart-empty strong {
+    font-size: 21px;
+  }
+  .neon-chart-empty p {
+    font-size: 10px;
+  }
+  .neon-chart-tooltip {
+    padding: 9px 12px;
+    max-width: 192px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .neon-chart-tooltip > strong {
+    font-size: 20px;
+  }
+  .neon-chart-tooltip > span {
     font-size: 8px;
   }
+  .neon-chart-tooltip > small {
+    font-size: 9px;
+  }
+  .neon-chart-labels {
+    font-size: 9px;
+  }
   .neon-chart-y-label {
-    font-size: 7px;
+    font-size: 8px;
   }
 }
